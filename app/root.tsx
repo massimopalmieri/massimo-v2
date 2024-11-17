@@ -5,9 +5,19 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import type {LinksFunction, MetaFunction} from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 
 import "./tailwind.css";
+import {ReactNode} from 'react';
+
+export const meta: MetaFunction = () => {
+  return [
+    {title: 'Massimo Palmieri'},
+    {charSet: 'utf-8'},
+    {viewport: 'width=device-width,initial-scale=1'},
+  ]
+}
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -22,7 +32,13 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export const loader = async () => {
+  return { gaTrackingId: process.env.GA_TRACKING_ID };
+};
+
+export function Layout({ children }: { children: ReactNode }) {
+  const {gaTrackingId} = useLoaderData<typeof loader>();
+
   return (
     <html lang="en">
       <head>

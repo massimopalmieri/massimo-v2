@@ -1,0 +1,149 @@
+{
+  "contacts": [
+    {
+      "label": "CV",
+      "link": ""
+    },
+    {
+      "label": "LinkedIn",
+      "link": "https://www.linkedin.com/in/massimopalmieri"
+    },
+    {
+      "label": "Email",
+      "link": "mailto:massimo.4iy55@simplelogin.co",
+      "_link": "mailto:massimo.palmieri+portfolio@gmail.com"
+    },
+    {
+      "label": "0782-417-4839",
+      "link": "tel:00447824174839"
+    }
+  ],
+  "education": [
+    {
+      "school": "Suor Orsola Benincasa University of Naples",
+      "title": "Bachelor degree in Communication Studies",
+      "year": "2011"
+    },
+    {
+      "school": "Suor Orsola Benincasa University of Naples",
+      "title": "Advertising, Visual communication and Marketing Planning workshops"
+    }
+  ],
+  "skills": [
+    "JavaScript",
+    "TypeScript",
+    "Node.js",
+    "React",
+    "React Native",
+    "Electron.js",
+    "HTML",
+    "CSS",
+    "SASS / Less",
+    "build systems",
+    "front-end architecture",
+    "responsive web design",
+    "UI/UX design",
+    "performance optimisation"
+  ],
+  "history": [
+    {
+      "employer": "Lloyds Bank",
+      "title": "Lead Software Engineer",
+      "start": "2019/2",
+      "end": "",
+      "achievements": [
+        "Set the strategic direction for how components and services are developed, tested and progressed within their Engineering discipline",
+        "Work with stakeholders to deliver business value through sound and fully rounded engineering methods and principles, ensuring platforms and software are built consistently with relevant patterns and practices",
+        "Ensure industry best practices are understood by Engineering Community and related business functions",
+        "Accountable for patterns and practices to be communicated and embedded across wider Engineering community",
+        "Foster knowledge sharing across Engineering community to provide solutions for complex business",
+        "Facilitate implementation of complex business problem solutions",
+        "Coach Engineering colleagues to ensure the appropriate development is in place"
+      ]
+    },
+    {
+      "employer": "Lloyds Bank",
+      "title": "Lead Front-End Engineer",
+      "start": "2017/10",
+      "end": "2019/2",
+      "achievements": [
+        "Writing modular, well tested front-end applications that remain easy to maintain as the codebase and business continues to scale",
+        "Setting the strategic direction for how front-end applications are developed within the team",
+        "Ensuring software is built in a way which is consistent with - and exploits where possible - the collective frameworks, patterns and practices that exist across the wider Engineering community",
+        "Understand and apply industry best practices, foster knowledge sharing to provide solutions for complex business problems where no precedent may exist, and ensure implementation of solutions where appropriate",
+        "Mentor and develop more junior front-end engineers, providing clear and constructive feedback and creating opportunities for learning and growth",
+        "Relentless focus on delivering business value through sound engineering methods and principles\n"
+      ]
+    },
+    {
+      "employer": "NeuLion, formerly Saffron Digital",
+      "title": "Lead Front-End Developer",
+      "date": "Mar 2014 — Oct 2017 (3 yrs, 7 mos)",
+      "start": "2014/3",
+      "end": "2017/10",
+      "achievements": [
+        "building a premium VOD service for Britain's biggest music retailer using React both on client and server, Redux, Webpack, es2015, babeljs",
+        "implementing a html 5 player to play DRM protected content and extending it to add our own UI and custom functionalities",
+        "splitting up parts of the codebase, when necessary, into a growing number of npm modules",
+        "building films.nolim.fr for Carrefour, a premium VOD service using AngularJs, Bootstrap, Gulp",
+        "building itvessentials.com for ITV, a premium SVOD service using AngularJs, Bootstrap, Gulp",
+        "building ITV Essentials iOS and Android hybrid app using AngularJs, Ionic, Cordova/PhoneGap, Bootstrap, Gulp",
+        "converting an existing Django CMS to a single page Backbone app",
+        "write unit tests with Jasmine and Mocha",
+        "optimise performances",
+        "building internal UI Toolkits for other developers to implement",
+        "providing a ux-design-development bridge",
+        "mentoring and supporting other front-end developers, providing feedback and guidance when required",
+        "helping to define coding standards - HTML, CSS and Sass, JavaScript"
+      ]
+    },
+    {
+      "employer": "Karmarama",
+      "title": "Senior Front-End Developer",
+      "date": "Jun 2012 — Mar 2014 (1 yr, 9 mos)",
+      "start": "2012/6",
+      "end": "2014/3",
+      "achievements": [
+        "developing high traffic websites for big brands such as BT, Porsche, De Beers, Debeers Forevermark and Plusnet using Html 5, javaScript, Css 3, Sass",
+        "developing a hybrid mobile app for Laithwaites Wines using Phonegap",
+        "developing crowdwish.com and its CMS using Backbone",
+        "building emails for Honda and British Gas"
+      ]
+    },
+    {
+      "employer": "SocialGO",
+      "title": "Front-End Developer",
+      "date": "Apr 2011 — Jun 2012 (1 yr, 2 mos)",
+      "start": "2011/4",
+      "end": "2012/6",
+      "achievements": [
+        "Designing and coding 'house' themes",
+        "Defining standards, conventions and guidelines around developing themes for the platform",
+        "Planning and executing a broader theme strategy",
+        "Diagnosing browser compatibility issues and running full browser compatibility testing"
+      ]
+    },
+    {
+      "employer": "De Pompeis",
+      "title": "Front-end Web Developer and Designer",
+      "date": "Oct 2010 — Mar 2011 (5 mos)",
+      "start": "2010/10",
+      "end": "2011/3",
+      "achievements": [
+        "Designing and developing websites",
+        "Designing logotypes, brand identity, brochures, packaging for several mass retailer"
+      ]
+    },
+    {
+      "employer": "Arkadia",
+      "title": "Front-end Web Developer and Designer",
+      "date": "Mar 2007 — Jul 2010 (3 yrs, 4 mos)",
+      "start": "2007/3",
+      "end": "2010/6",
+      "achievements": [
+        "Designing and developing the front-end of several web sites, a web app and a custom CMS",
+        "Designed brand identity, brochures, catalogs and packaging for several clients"
+      ]
+    }
+  ]
+}
