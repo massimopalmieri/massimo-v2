@@ -4,7 +4,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
+  useRouteLoaderData,
 } from "@remix-run/react";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 
@@ -32,12 +32,15 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async () => {
-  return { gaTrackingId: process.env.GA_TRACKING_ID };
+  return {
+    ENV: {
+      GA_TRACKING_ID: process.env.GA_TRACKING_ID,
+      RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY,
+    },
+  };
 };
 
 export function Layout({ children }: { children: ReactNode }) {
-  const { gaTrackingId } = useLoaderData<typeof loader>();
-
   return (
     <html lang="en">
       <head>
@@ -57,4 +60,8 @@ export function Layout({ children }: { children: ReactNode }) {
 
 export default function App() {
   return <Outlet />;
+}
+
+export function useRootLoaderData() {
+  return useRouteLoaderData<typeof loader>("root");
 }

@@ -1,11 +1,22 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useRef, useState, useEffect } from "react";
 import data from "~/data.json";
 import { motion } from "framer-motion";
+import { z } from "zod";
+import { useFetcher } from "@remix-run/react";
+import { useRootLoaderData } from "~/root";
 
 const formatter = new Intl.DateTimeFormat("en-GB", {
   month: "short",
   year: "numeric",
 });
+
+const contactSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+});
+
+type ContactForm = z.infer<typeof contactSchema>;
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return (
@@ -23,7 +34,123 @@ function SectionTitle({ children }: { children: ReactNode }) {
   );
 }
 
+const scrollToContact = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  e.preventDefault();
+  document.getElementById("contact")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+};
+
+declare global {
+  interface Window {
+    grecaptcha: {
+      ready: (cb: () => void) => void;
+      execute: (
+        siteKey: string,
+        options: { action: string }
+      ) => Promise<string>;
+    };
+  }
+}
+
 export default function Index() {
+  const fetcher = useFetcher();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ContactForm, string>>
+  >({});
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const root = useRootLoaderData();
+  const RECAPTCHA_SITE_KEY = root?.ENV?.RECAPTCHA_SITE_KEY;
+
+  const validateField = (name: keyof ContactForm, value: string) => {
+    const result = contactSchema.shape[name].safeParse(value);
+    if (!result.success) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: result.error.issues[0].message,
+      }));
+    } else {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const form = e.target as HTMLFormElement;
+    if (!form) return;
+
+    setErrors({});
+    setIsSuccess(false);
+
+    try {
+      // Get reCAPTCHA token if site key exists
+      let recaptchaToken = "";
+      if (RECAPTCHA_SITE_KEY) {
+        try {
+          recaptchaToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, {
+            action: "submit",
+          });
+        } catch (error) {
+          console.error("reCAPTCHA error:", error);
+          return;
+        }
+      }
+
+      const formData = new FormData(form);
+      // Add recaptcha token to form data if we have it
+      if (recaptchaToken) {
+        formData.append("recaptchaToken", recaptchaToken);
+      }
+
+      const formObject = Object.fromEntries(formData);
+      const result = contactSchema.safeParse(formObject);
+
+      if (!result.success) {
+        const formattedErrors: Partial<Record<keyof ContactForm, string>> = {};
+        result.error.issues.forEach((issue) => {
+          const path = issue.path[0] as keyof ContactForm;
+          formattedErrors[path] = issue.message;
+        });
+        setErrors(formattedErrors);
+        return;
+      }
+
+      fetcher.submit(formData, {
+        method: "POST",
+        action: "/api/contact",
+      });
+    } catch (error) {
+      console.error("Form submission error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data?.success) {
+      formRef.current?.reset();
+      setIsSuccess(true);
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  useEffect(() => {
+    if (!RECAPTCHA_SITE_KEY) return;
+
+    const script = document.createElement("script");
+    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, [RECAPTCHA_SITE_KEY]);
+
   return (
     <div
       className="relative min-h-screen bg-zinc-950 selection:bg-accent/30"
@@ -79,30 +206,30 @@ export default function Index() {
       <div className="relative mx-auto max-w-screen-xl px-6 pb-32">
         {/* Header */}
         <header className="relative min-h-screen">
-          <nav className="absolute left-0 right-0 top-0">
-            <motion.div
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="mx-auto max-w-3xl flex items-center justify-end py-8"
+          {/* Floating Contact Button */}
+          <motion.a
+            href="#contact"
+            onClick={scrollToContact}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="fixed bottom-8 right-8 z-50 flex items-center gap-2 rounded-full bg-accent/10 pl-4 pr-5 py-3 text-accent transition-colors hover:bg-accent/20 group"
+          >
+            <span className="text-sm font-light">Contact me</span>
+            <svg
+              className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <div className="flex items-center gap-8">
-                <a
-                  href="#work"
-                  className="group text-sm tracking-wider text-white/60"
-                >
-                  Work
-                  <div className="h-px w-0 transition-all group-hover:w-full bg-accent" />
-                </a>
-                <a
-                  href="#contact"
-                  className="group text-sm tracking-wider text-white/60"
-                >
-                  Contact
-                  <div className="h-px w-0 transition-all group-hover:w-full bg-accent" />
-                </a>
-              </div>
-            </motion.div>
-          </nav>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+              />
+            </svg>
+          </motion.a>
 
           <div className="flex min-h-screen items-center justify-center">
             <motion.div
@@ -180,7 +307,7 @@ export default function Index() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  key={job.employer}
+                  key={i}
                   className="group relative grid gap-8 md:grid-cols-[180px_1fr]"
                 >
                   {/* Timeline dot - aligned to the center of the line */}
@@ -221,6 +348,100 @@ export default function Index() {
 
           {/* Education section - similar updates to Experience section */}
           {/* ... */}
+
+          <section id="contact" className="py-32">
+            <SectionTitle>Contact</SectionTitle>
+
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              className="mx-auto max-w-xl space-y-6"
+            >
+              {isSuccess && (
+                <div className="rounded-lg bg-green-500/10 px-4 py-3 text-sm text-green-500">
+                  Thanks for your message! I'll get back to you soon.
+                </div>
+              )}
+              {fetcher.data?.error && (
+                <div className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-500">
+                  {fetcher.data.error}
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-light text-white/60"
+                  >
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    onBlur={(e) => validateField("name", e.target.value)}
+                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+                    placeholder="Your name"
+                  />
+                  {errors.name && (
+                    <span className="mt-2 block text-sm text-red-400">
+                      {errors.name}
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-light text-white/60"
+                  >
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    onBlur={(e) => validateField("email", e.target.value)}
+                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+                    placeholder="your@email.com"
+                  />
+                  {errors.email && (
+                    <span className="mt-2 block text-sm text-red-400">
+                      {errors.email}
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-light text-white/60"
+                  >
+                    Message
+                  </label>
+                  <textarea
+                    name="message"
+                    rows={5}
+                    onBlur={(e) => validateField("message", e.target.value)}
+                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+                    placeholder="Your message..."
+                  />
+                  {errors.message && (
+                    <span className="mt-2 block text-sm text-red-400">
+                      {errors.message}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={fetcher.state !== "idle"}
+                className="rounded-lg bg-accent/10 px-8 py-3 text-sm font-light text-accent transition-colors hover:bg-accent/20 disabled:opacity-50"
+              >
+                {fetcher.state !== "idle" ? "Sending..." : "Send Message"}
+              </button>
+            </form>
+          </section>
         </main>
       </div>
     </div>
