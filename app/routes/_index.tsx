@@ -62,6 +62,7 @@ export default function Index() {
     Partial<Record<keyof ContactForm, string>>
   >({});
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showContactButton, setShowContactButton] = useState(true);
 
   const { ENV } = useRootLoaderData();
   const RECAPTCHA_SITE_KEY = ENV.RECAPTCHA_SITE_KEY;
@@ -163,6 +164,26 @@ export default function Index() {
     };
   }, [RECAPTCHA_SITE_KEY]);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowContactButton(!entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      observer.observe(contactSection);
+    }
+
+    return () => {
+      if (contactSection) {
+        observer.unobserve(contactSection);
+      }
+    };
+  }, []);
+
   return (
     <div
       className="relative min-h-screen bg-zinc-950 selection:bg-accent/30"
@@ -223,9 +244,9 @@ export default function Index() {
             href="#contact"
             onClick={scrollToContact}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="fixed bottom-8 right-8 z-50 flex items-center gap-2 rounded-full bg-accent/10 pl-4 pr-5 py-3 text-accent transition-colors hover:bg-accent/20 group"
+            animate={{ opacity: showContactButton ? 1 : 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-8 right-8 z-50 flex items-center gap-2 rounded-full bg-accent/20 pl-4 pr-5 py-3 text-accent transition-colors hover:bg-accent/30 group"
           >
             <span className="text-sm font-light">Contact me</span>
             <svg
@@ -250,10 +271,8 @@ export default function Index() {
               transition={{ delay: 0.2 }}
               className="mx-auto max-w-3xl"
             >
-              <h1 className="mb-8">
-                <span className="block text-6xl sm:text-7xl font-light tracking-tight bg-gradient-to-r from-accent via-accent/80 to-purple-500 bg-clip-text text-transparent">
-                  Massimo Palmieri
-                </span>
+              <h1 className="animate-gradient bg-gradient-to-r from-white via-white/50 to-white bg-clip-text text-transparent font-light tracking-tight text-6xl sm:text-7xl mb-4">
+                Massimo Palmieri
               </h1>
 
               <div className="max-w-xl">
