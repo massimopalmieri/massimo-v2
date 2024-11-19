@@ -35,8 +35,8 @@ function SectionTitle({ children }: { children: ReactNode }) {
   );
 }
 
-const scrollToContact = (e: React.MouseEvent<HTMLAnchorElement>) => {
-  e.preventDefault();
+const scrollToContact = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  event.preventDefault();
   document.getElementById("contact")?.scrollIntoView({
     behavior: "smooth",
     block: "start",
@@ -63,8 +63,8 @@ export default function Index() {
   >({});
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const root = useRootLoaderData();
-  const RECAPTCHA_SITE_KEY = root?.ENV?.RECAPTCHA_SITE_KEY;
+  const { ENV } = useRootLoaderData();
+  const RECAPTCHA_SITE_KEY = ENV.RECAPTCHA_SITE_KEY;
 
   const validateField = (name: keyof ContactForm, value: string) => {
     const result = contactSchema.shape[name].safeParse(value);
@@ -82,10 +82,10 @@ export default function Index() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-    const form = e.target as HTMLFormElement;
+    const form = event.target as HTMLFormElement;
     if (!form) return;
 
     setErrors({});
@@ -314,7 +314,7 @@ export default function Index() {
 
             <div className="relative space-y-24">
               {/* Timeline line - keep it at exactly 180px */}
-              <div className="absolute bottom-0 left-[180px] top-0 w-px bg-accent/20" />
+              <div className="absolute bottom-0 md:left-[180px] top-0 w-px bg-accent/20" />
 
               {data.history.map((job, index) => (
                 <motion.article
@@ -323,10 +323,10 @@ export default function Index() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   key={index}
-                  className="group relative grid gap-8 md:grid-cols-[180px_1fr]"
+                  className="group relative grid gap-8 md:grid-cols-[180px_1fr] ml-8 md:ml-0"
                 >
                   {/* Timeline dot - aligned to the center of the line */}
-                  <div className="absolute left-[177px] top-2.5 h-1.5 w-1.5 rounded-full bg-accent" />
+                  <div className="absolute md:left-[177px] top-2.5 h-1.5 w-1.5 rounded-full bg-accent -ml-8 translate-x-[-2.5px] md:translate-x-0 md:ml-0" />
 
                   <div className="relative space-y-1">
                     <div className="font-mono text-xs text-accent/60">
