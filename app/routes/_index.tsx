@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useFetcher } from "@remix-run/react";
 import { useRootLoaderData } from "~/root";
 import { trackEvent } from "~/utils/analytics";
+import { isChristmasSeason } from "~/utils/dates";
 
 const formatter = new Intl.DateTimeFormat("en-GB", {
   month: "short",
@@ -53,6 +54,34 @@ declare global {
       ) => Promise<string>;
     };
   }
+}
+
+function SnowAnimation() {
+  return (
+    <div className="fixed inset-0 pointer-events-none z-50">
+      {[...Array(50)].map((_, i) => {
+        // Calculate depth factor (0 to 1)
+        const depth = Math.random();
+        return (
+          <div
+            key={i}
+            className="snow"
+            style={
+              {
+                "--size": `${Math.random() * 8 + 4}px`,
+                "--left": `${Math.random() * 100}vw`,
+                "--delay": `${Math.random() * 5}s`,
+                "--duration": `${Math.random() * 3 + 2}s`,
+                "--drift": `${Math.random() * 20 - 10}`,
+                "--opacity": depth * 0.5 + 0.1, // 0.1 to 0.6 opacity
+                "--blur": `${(1 - depth) * 3}px`, // 0px to 3px blur
+              } as React.CSSProperties
+            }
+          />
+        );
+      })}
+    </div>
+  );
 }
 
 export default function Index() {
@@ -172,7 +201,7 @@ export default function Index() {
       { threshold: 0.1 }
     );
 
-    const contactSection = document.getElementById('contact');
+    const contactSection = document.getElementById("contact");
     if (contactSection) {
       observer.observe(contactSection);
     }
@@ -191,6 +220,7 @@ export default function Index() {
         WebkitTapHighlightColor: "transparent",
       }}
     >
+      {isChristmasSeason() && <SnowAnimation />}
       {/* Enhanced background gradients */}
       <div className="pointer-events-none fixed inset-0">
         {/* Main gradient */}
@@ -287,29 +317,28 @@ export default function Index() {
         </header>
 
         {/* Main Content */}
-        <main className="mx-auto max-w-3xl">
+        <main className="mx-auto max-w-3xl space-y-32">
           {/* Skills section */}
-          <section className="py-16">
+          <section>
             <SectionTitle>Expertise</SectionTitle>
 
             <div className="relative overflow-hidden -mx-6 sm:-mx-12 md:-mx-24 lg:mx-[calc(-50vw+50%)]">
               <motion.div
                 className="flex py-4"
                 animate={{
-                  x: ["0%", "-50%"],
+                  x: ["0%", "-200%"],
                 }}
                 transition={{
                   x: {
                     repeat: Infinity,
                     repeatType: "loop",
-                    duration: 20,
+                    duration: 40,
                     ease: "linear",
                   },
                 }}
               >
-                {/* Double the items to create seamless loop */}
-                {[...data.skills, ...data.skills].map((skill, index) => (
-                  <div key={index} className="group relative shrink-0 px-6">
+                {data.skills.map((skill, index) => (
+                  <div key={skill} className="group relative shrink-0 px-6">
                     <div className="relative">
                       <span className="font-mono text-xs text-accent/40">
                         {String((index % data.skills.length) + 1).padStart(
@@ -383,7 +412,7 @@ export default function Index() {
           {/* Education section - similar updates to Experience section */}
           {/* ... */}
 
-          <section id="contact" className="py-32">
+          <section id="contact">
             <SectionTitle>Contact</SectionTitle>
 
             <form

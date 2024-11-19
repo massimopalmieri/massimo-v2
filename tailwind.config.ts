@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { isChristmasSeason } from "./app/utils/dates";
 
 export default {
   content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
@@ -9,7 +10,8 @@ export default {
         // accent: "rgb(45, 212, 191)",
 
         // Blue - classic, reliable, tech-focused
-        accent: "rgb(59, 130, 246)",
+        // accent: "rgb(59, 130, 246)",
+        accent: isChristmasSeason() ? "#dc2626" : "rgb(59, 130, 246)", // Christmas red : Default purple
 
         // Emerald - fresh, growth-oriented
         // accent: "rgb(52, 211, 153)",
