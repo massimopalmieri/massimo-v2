@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { z } from "zod";
 import { useFetcher } from "@remix-run/react";
 import { useRootLoaderData } from "~/root";
+import { trackEvent } from "~/utils/analytics";
 
 const formatter = new Intl.DateTimeFormat("en-GB", {
   month: "short",
@@ -123,11 +124,22 @@ export default function Index() {
         return;
       }
 
+      // Track successful form submission
+      trackEvent("form_submit", {
+        type: "contact_form",
+        value: "success",
+      });
+
       fetcher.submit(formData, {
         method: "POST",
         action: "/api/contact",
       });
     } catch (error) {
+      // Track form errors
+      trackEvent("form_error", {
+        type: "contact_form",
+        value: error instanceof Error ? error.message : "Unknown error",
+      });
       console.error("Form submission error:", error);
     }
   };
@@ -277,11 +289,14 @@ export default function Index() {
                 }}
               >
                 {/* Double the items to create seamless loop */}
-                {[...data.skills, ...data.skills].map((skill, i) => (
-                  <div key={i} className="group relative shrink-0 px-6">
+                {[...data.skills, ...data.skills].map((skill, index) => (
+                  <div key={index} className="group relative shrink-0 px-6">
                     <div className="relative">
                       <span className="font-mono text-xs text-accent/40">
-                        {String((i % data.skills.length) + 1).padStart(2, "0")}
+                        {String((index % data.skills.length) + 1).padStart(
+                          2,
+                          "0"
+                        )}
                       </span>
                       <h3 className="mt-2 text-5xl font-light tracking-tight text-white/40 transition-colors duration-300 group-hover:text-white whitespace-nowrap">
                         {skill}
@@ -301,13 +316,13 @@ export default function Index() {
               {/* Timeline line - keep it at exactly 180px */}
               <div className="absolute bottom-0 left-[180px] top-0 w-px bg-accent/20" />
 
-              {data.history.map((job, i) => (
+              {data.history.map((job, index) => (
                 <motion.article
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  key={i}
+                  transition={{ delay: index * 0.1 }}
+                  key={index}
                   className="group relative grid gap-8 md:grid-cols-[180px_1fr]"
                 >
                   {/* Timeline dot - aligned to the center of the line */}
@@ -379,7 +394,9 @@ export default function Index() {
                   <input
                     type="text"
                     name="name"
-                    onBlur={(e) => validateField("name", e.target.value)}
+                    onBlur={(event) =>
+                      validateField("name", event.target.value)
+                    }
                     className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
                     placeholder="Your name"
                   />
@@ -400,7 +417,9 @@ export default function Index() {
                   <input
                     type="email"
                     name="email"
-                    onBlur={(e) => validateField("email", e.target.value)}
+                    onBlur={(event) =>
+                      validateField("email", event.target.value)
+                    }
                     className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
                     placeholder="your@email.com"
                   />
@@ -421,7 +440,9 @@ export default function Index() {
                   <textarea
                     name="message"
                     rows={5}
-                    onBlur={(e) => validateField("message", e.target.value)}
+                    onBlur={(event) =>
+                      validateField("message", event.target.value)
+                    }
                     className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
                     placeholder="Your message..."
                   />

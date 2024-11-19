@@ -6,7 +6,11 @@ import {
   ScrollRestoration,
   useRouteLoaderData,
 } from "@remix-run/react";
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import type {
+  LinksFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
 
 import "./tailwind.css";
 import { ReactNode } from "react";
@@ -31,16 +35,18 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export const loader = async () => {
+export const loader: LoaderFunction = async () => {
   return {
     ENV: {
-      GA_TRACKING_ID: process.env.GA_TRACKING_ID,
       RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY,
     },
   };
 };
 
 export function Layout({ children }: { children: ReactNode }) {
+  const isProduction = process.env.NODE_ENV === "production";
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   return (
     <html lang="en">
       <head>
@@ -48,6 +54,26 @@ export function Layout({ children }: { children: ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+
+        {isProduction && (
+          <script
+            defer
+            src="https://cloud.umami.is/script.js"
+            data-website-id="e02d5129-e6c6-4b6b-baa0-c66650fd7fa6"
+          ></script>
+        )}
+        {isDevelopment && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                console.log('Analytics disabled in development');
+                window.umami = {
+                  track: (...args) => console.log('Track event (dev):', ...args)
+                };
+              `,
+            }}
+          />
+        )}
       </head>
       <body>
         {children}
