@@ -392,8 +392,10 @@ export default function Index() {
                     Name
                   </label>
                   <input
-                    type="text"
+                    id="name"
                     name="name"
+                    type="text"
+                    autoComplete="name"
                     onBlur={(event) =>
                       validateField("name", event.target.value)
                     }
@@ -415,8 +417,10 @@ export default function Index() {
                     Email
                   </label>
                   <input
-                    type="email"
+                    id="email"
                     name="email"
+                    type="email"
+                    autoComplete="email"
                     onBlur={(event) =>
                       validateField("email", event.target.value)
                     }
@@ -438,6 +442,7 @@ export default function Index() {
                     Message
                   </label>
                   <textarea
+                    id="message"
                     name="message"
                     rows={5}
                     onBlur={(event) =>
