@@ -58,7 +58,7 @@
     {
       "employer": "Lloyds Bank",
       "title": "Lead Software Engineer",
-      "start": "2019/2",
+      "start": "2019-02-01",
       "end": "",
       "achievements": [
         "Set the strategic direction for how components and services are developed, tested, and progressed within the engineering discipline.",
@@ -73,8 +73,8 @@
     {
       "employer": "Lloyds Bank",
       "title": "Lead Front-End Engineer",
-      "start": "2017/10",
-      "end": "2019/2",
+      "start": "2017-10-01",
+      "end": "2019-02-01",
       "achievements": [
         "Developed modular, well-tested front-end applications to ensure scalability as the codebase and business grew.",
         "Set the strategic direction for front-end application development within the team.",
@@ -87,8 +87,8 @@
     {
       "employer": "NeuLion (formerly Saffron Digital)",
       "title": "Lead Front-End Developer",
-      "start": "2014/3",
-      "end": "2017/10",
+      "start": "2014-03-01",
+      "end": "2017-10-01",
       "achievements": [
         "Developed a premium Video on Demand (VOD) service for a major UK music retailer using React (both client- and server-side), Redux, Webpack, ES2015, and Babel.js.",
         "Implemented an HTML5 player for DRM-protected content with a custom UI and functionalities.",
@@ -107,8 +107,8 @@
     {
       "employer": "Karmarama",
       "title": "Senior Front-End Developer",
-      "start": "2012/6",
-      "end": "2014/3",
+      "start": "2012-06-01",
+      "end": "2014-03-01",
       "achievements": [
         "Developed high-traffic websites for leading brands such as BT, Porsche, De Beers, De Beers Forevermark, and Plusnet using HTML5, JavaScript, CSS3, and SASS.",
         "Built a hybrid mobile app for Laithwaites Wines using PhoneGap.",
@@ -119,8 +119,8 @@
     {
       "employer": "SocialGO",
       "title": "Front-End Developer",
-      "start": "2011/4",
-      "end": "2012/6",
+      "start": "2011-04-01",
+      "end": "2012-06-01",
       "achievements": [
         "Designed and coded 'house' themes for the platform.",
         "Defined standards, conventions, and guidelines for theme development.",
@@ -131,8 +131,8 @@
     {
       "employer": "De Pompeis",
       "title": "Front-End Web Developer and Designer",
-      "start": "2010/10",
-      "end": "2011/3",
+      "start": "2010-10-01",
+      "end": "2011-03-01",
       "achievements": [
         "Designed and developed websites.",
         "Created logos, brand identities, brochures, and packaging for mass retailers."
@@ -141,8 +141,8 @@
     {
       "employer": "Arkadia",
       "title": "Front-End Web Developer and Designer",
-      "start": "2007/3",
-      "end": "2010/6",
+      "start": "2007-03-01",
+      "end": "2010-06-01",
       "achievements": [
         "Designed and developed front-end solutions for several websites, a web app, and a custom content management system (CMS).",
         "Created brand identities, brochures, catalogues, and packaging for various clients."
