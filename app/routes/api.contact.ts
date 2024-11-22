@@ -5,37 +5,6 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-/**
- * Production Improvements Needed:
- *
- * 1. Replace in-memory Map with Redis or similar:
- *    - Current implementation loses data on server restart
- *    - Memory leaks possible with large number of IPs
- *    - Not suitable for multiple server instances
- *
- * 2. Use a rate-limiting service/middleware:
- *    - Consider using Upstash, Redis Enterprise, or similar
- *    - Look into packages like rate-limiter-flexible
- *    - Implement retry-after headers properly
- *
- * 3. Improve IP detection:
- *    - Handle proxy chains properly
- *    - Consider using CF-Connecting-IP if behind Cloudflare
- *    - Validate and sanitize IP addresses
- *
- * 4. Add graduated rate limits:
- *    - 3 requests per hour
- *    - 10 requests per day
- *    - 30 requests per week
- *    - Different limits for verified users
- *
- * 5. Add monitoring and security:
- *    - Log rate limit hits for monitoring
- *    - Add alerts for abuse patterns
- *    - Consider adding CAPTCHA for repeated attempts
- *    - Implement IP allowlist/blocklist
- */
-
 // Simple in-memory rate limiting store
 const rateLimitStore = new Map<string, { count: number; timestamp: number }>();
 
@@ -154,6 +123,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // Check rate limit
   const rateLimitCheck = checkRateLimit(ip);
+  
   if (!rateLimitCheck.allowed) {
     return json(
       { success: false, error: rateLimitCheck.error },
@@ -205,6 +175,7 @@ export const action: ActionFunction = async ({ request }) => {
       text: `
 Name: ${name}
 Email: ${email}
+
 Email Quality Score: ${emailValidation.quality_score}
 reCAPTCHA Score: ${recaptchaResult.score}
 
