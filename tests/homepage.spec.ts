@@ -21,23 +21,19 @@ test.describe("Index Page", () => {
   test("should validate contact form fields", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Send Message" }).click();
-    await expect(page.getByText("Name is required")).toBeVisible();
-    await expect(page.getByText("Invalid email address")).toBeVisible();
-    await expect(page.getByText("Message must be at least 10")).toBeVisible();
+
+    await expect(page.getByText(/Name is required/i)).toBeVisible();
+    await expect(page.getByText(/Invalid email address/i)).toBeVisible();
+    await expect(page.getByText(/Message is required/i)).toBeVisible();
   });
 
   test("should submit the contact form successfully", async ({ page }) => {
-    await page.route("*/**/api/contact.data", async (route) => {
-      const json = [{ name: "Strawberry", id: 21 }];
-      await route.fulfill({ json });
-    });
-
     await page.goto("/");
-
     await page.click('a[href="#contact"]');
     await page.getByLabel("name").fill("John Doe");
     await page.getByLabel("email").fill("john.doe@example.com");
     await page.getByLabel("message").fill("This is a valid message.");
     await page.getByRole("button", { name: "Send Message" }).click();
+    await expect(page.getByText("Thanks for your message! I'll")).toBeVisible();
   });
 });
