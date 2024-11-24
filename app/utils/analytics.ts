@@ -11,13 +11,13 @@ declare global {
   }
 }
 
-export const trackEvent = (eventName: string, eventData?: UmamiEvent) => {
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('Track event (dev):', eventName, eventData);
+export function trackEvent(eventName: string, eventData?: UmamiEvent) {
+  if (process.env.NODE_ENV !== "production") {
+    console.log("Track event (dev):", eventName, eventData);
     return;
   }
 
   if (window.umami) {
     window.umami.track(eventName, eventData);
   }
-}; 
+}

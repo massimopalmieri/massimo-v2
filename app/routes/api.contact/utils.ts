@@ -41,6 +41,11 @@ export function checkRateLimit(ip: string): {
   const now = Date.now();
   const record = rateLimitStore.get(ip);
 
+  // Allow all requests in test environment
+  if (process.env.NODE_ENV === "development") {
+    return { allowed: true };
+  }
+
   // Clean up old records
   if (record && now - record.timestamp > RATE_LIMIT.WINDOW) {
     rateLimitStore.delete(ip);

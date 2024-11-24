@@ -1,5 +1,5 @@
-import { data } from "@remix-run/node";
-import type { ActionFunction } from "@remix-run/node";
+import type { Route } from "./+types/route";
+import { data } from "react-router";
 import { z } from "zod";
 import { Resend } from "resend";
 import {
@@ -18,7 +18,7 @@ const contactSchema = z.object({
   recaptchaToken: z.string().min(1, "reCAPTCHA verification failed"),
 });
 
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: Route.ActionArgs) {
   if (request.method !== "POST") {
     return data(
       { success: false, error: "Method not allowed" },
@@ -109,4 +109,4 @@ ${message}
       { status: 500 }
     );
   }
-};
+}

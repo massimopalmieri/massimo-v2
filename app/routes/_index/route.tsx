@@ -2,7 +2,7 @@ import { type ReactNode, useRef, useState, useEffect } from "react";
 import data from "~/data.json";
 import { motion } from "framer-motion";
 import { z } from "zod";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher } from "react-router";
 import { useRootLoaderData } from "~/root";
 import { trackEvent } from "~/utils/analytics";
 import { isChristmasSeason } from "~/utils/dates";
@@ -53,6 +53,7 @@ declare global {
         siteKey: string,
         options: { action: string }
       ) => Promise<string>;
+      render: (element: HTMLElement, options: { sitekey: string }) => void;
     };
   }
 }
