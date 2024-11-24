@@ -26,7 +26,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:3000',
+    baseURL: "http://localhost:3000",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
@@ -75,5 +75,11 @@ export default defineConfig({
     command: "npm run dev -- --port 3000",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
+    env: {
+      RESEND_API_KEY: "123-123",
+      RECAPTCHA_SITE_KEY: "6LfCBYkqAAAAACe41nVkwfVHG9nbuYKV80FZpePC",
+      RECAPTCHA_SECRET_KEY: "6LfCBYkqAAAAAKZ_X16PeJ1hGwHbiTsMIPKQd_mQ",
+      ABSTRACT_API_KEY: "123-123",
+    },
   },
 });

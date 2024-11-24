@@ -10,7 +10,7 @@ export const handlers = [
     const { searchParams } = new URL(request.url);
 
     return HttpResponse.json({
-      email: searchParams.get("email"),
+      email: `mock_${searchParams.get("email")}`,
       is_valid_format: { value: true },
       is_disposable_email: { value: false },
       is_catchall_email: { value: false },
