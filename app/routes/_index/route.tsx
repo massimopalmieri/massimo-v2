@@ -2,10 +2,11 @@ import { type ReactNode, useRef, useState, useEffect } from "react";
 import data from "~/data.json";
 import { motion } from "framer-motion";
 import { z } from "zod";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher } from "react-router";
 import { useRootLoaderData } from "~/root";
 import { trackEvent } from "~/utils/analytics";
 import { isChristmasSeason } from "~/utils/dates";
+import { action } from "../api.contact/route";
 
 const formatter = new Intl.DateTimeFormat("en-GB", {
   month: "short",
@@ -15,7 +16,7 @@ const formatter = new Intl.DateTimeFormat("en-GB", {
 const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().min(1, "Email is required").email("Invalid email address"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+  message: z.string().min(1, "Message is required"),
 });
 
 type ContactForm = z.infer<typeof contactSchema>;
@@ -52,6 +53,7 @@ declare global {
         siteKey: string,
         options: { action: string }
       ) => Promise<string>;
+      render: (element: HTMLElement, options: { sitekey: string }) => void;
     };
   }
 }
@@ -85,7 +87,7 @@ function SnowAnimation() {
 }
 
 export default function Index() {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<typeof action>();
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<
     Partial<Record<keyof ContactForm, string>>
@@ -93,8 +95,9 @@ export default function Index() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [showContactButton, setShowContactButton] = useState(true);
 
-  const { ENV } = useRootLoaderData();
-  const RECAPTCHA_SITE_KEY = ENV.RECAPTCHA_SITE_KEY;
+  const {
+    ENV: { RECAPTCHA_SITE_KEY },
+  } = useRootLoaderData();
 
   const validateField = (name: keyof ContactForm, value: string) => {
     const result = contactSchema.shape[name].safeParse(value);
@@ -124,15 +127,14 @@ export default function Index() {
     try {
       // Get reCAPTCHA token if site key exists
       let recaptchaToken = "";
-      if (RECAPTCHA_SITE_KEY) {
-        try {
-          recaptchaToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, {
-            action: "submit",
-          });
-        } catch (error) {
-          console.error("reCAPTCHA error:", error);
-          return;
-        }
+
+      try {
+        recaptchaToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, {
+          action: "submit",
+        });
+      } catch (error) {
+        console.error("reCAPTCHA error:", error);
+        return;
       }
 
       const formData = new FormData(form);
