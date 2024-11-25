@@ -5,15 +5,13 @@ import {
   Scripts,
   ScrollRestoration,
   useRouteLoaderData,
-} from "@remix-run/react";
-import type {
-  LinksFunction,
-  LoaderFunction,
-  MetaFunction,
-} from "@remix-run/node";
+} from "react-router";
+import type { LinksFunction, LoaderFunction, MetaFunction } from "react-router";
 
 import "./tailwind.css";
 import { ReactNode } from "react";
+import { Route } from "./+types/root";
+import invariant from "tiny-invariant";
 
 export const meta: MetaFunction = () => {
   return [
@@ -36,13 +34,15 @@ export const links: LinksFunction = () => [
   { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
 ];
 
-export const loader: LoaderFunction = async () => {
+export async function loader() {
+  invariant(process.env.RECAPTCHA_SITE_KEY, "RECAPTCHA_SITE_KEY is undefined");
+  
   return {
     ENV: {
       RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY,
     },
   };
-};
+}
 
 export function Layout({ children }: { children: ReactNode }) {
   const isProduction = process.env.NODE_ENV === "production";
@@ -51,8 +51,6 @@ export function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
 
@@ -63,6 +61,7 @@ export function Layout({ children }: { children: ReactNode }) {
             data-website-id="e02d5129-e6c6-4b6b-baa0-c66650fd7fa6"
           ></script>
         )}
+
         {isDevelopment && (
           <script
             dangerouslySetInnerHTML={{
