@@ -14,7 +14,7 @@ describe("Rate Limiting", () => {
   test("allows initial requests", () => {
     const result = checkRateLimit("127.0.0.1");
     expect(result.allowed).toBe(true);
-    expect(result.error).toBeUndefined();
+    expect(result.error).toBeNull();
   });
 
   test("blocks after exceeding limit", () => {

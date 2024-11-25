@@ -1,8 +1,17 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteLoaderData } from "react-router";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useRouteLoaderData,
+} from "react-router";
 import type { LinksFunction, LoaderFunction, MetaFunction } from "react-router";
 
 import "./tailwind.css";
 import { ReactNode } from "react";
+import { Route } from "./+types/root";
+import invariant from "tiny-invariant";
 
 export const meta: MetaFunction = () => {
   return [
@@ -25,13 +34,15 @@ export const links: LinksFunction = () => [
   { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
 ];
 
-export const loader: LoaderFunction = async () => {
+export async function loader() {
+  invariant(process.env.RECAPTCHA_SITE_KEY, "RECAPTCHA_SITE_KEY is undefined");
+  
   return {
     ENV: {
       RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY,
     },
   };
-};
+}
 
 export function Layout({ children }: { children: ReactNode }) {
   const isProduction = process.env.NODE_ENV === "production";

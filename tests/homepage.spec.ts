@@ -48,6 +48,6 @@ test.describe("Index Page", () => {
     await page.getByLabel("email").fill("john.doe@example.com");
     await page.getByLabel("message").fill("This is a valid message.");
     await page.getByRole("button", { name: "Send Message" }).click();
-    await expect(page.getByText("Thanks for your message! I'll")).toBeVisible();
+    await expect(page.getByText("Thanks for your message! I’ll")).toBeVisible();
   });
 });
