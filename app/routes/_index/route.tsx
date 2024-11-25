@@ -7,6 +7,8 @@ import { useRootLoaderData } from "~/root";
 import { trackEvent } from "~/utils/analytics";
 import { isChristmasSeason } from "~/utils/dates";
 import { action } from "../api.contact/route";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import invariant from "tiny-invariant";
 
 const formatter = new Intl.DateTimeFormat("en-GB", {
   month: "short",
@@ -95,9 +97,11 @@ export default function Index() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [showContactButton, setShowContactButton] = useState(true);
 
-  const {
-    ENV: { RECAPTCHA_SITE_KEY },
-  } = useRootLoaderData();
+  const rootLoaderData = useRootLoaderData();
+
+  invariant(rootLoaderData, "Root loader data is undefined");
+
+  const { RECAPTCHA_SITE_KEY } = rootLoaderData.ENV;
 
   const validateField = (name: keyof ContactForm, value: string) => {
     const result = contactSchema.shape[name].safeParse(value);
@@ -183,17 +187,17 @@ export default function Index() {
     }
   }, [fetcher.state, fetcher.data]);
 
-  useEffect(() => {
-    if (!RECAPTCHA_SITE_KEY) return;
+  // useEffect(() => {
+  //   if (!RECAPTCHA_SITE_KEY) return;
 
-    const script = document.createElement("script");
-    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
-    document.body.appendChild(script);
+  //   const script = document.createElement("script");
+  //   script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+  //   document.body.appendChild(script);
 
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, [RECAPTCHA_SITE_KEY]);
+  //   return () => {
+  //     document.body.removeChild(script);
+  //   };
+  // }, [RECAPTCHA_SITE_KEY]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -417,106 +421,116 @@ export default function Index() {
           <section id="contact">
             <SectionTitle>Contact</SectionTitle>
 
-            <form
-              ref={formRef}
-              onSubmit={handleSubmit}
-              className="mx-auto max-w-xl space-y-6"
+            <GoogleReCaptchaProvider
+              reCaptchaKey={RECAPTCHA_SITE_KEY}
+              scriptProps={{
+                async: false,
+                defer: true,
+                appendTo: "head",
+                nonce: undefined,
+              }}
             >
-              {isSuccess && (
-                <div className="rounded-lg bg-green-500/10 px-4 py-3 text-sm text-green-500">
-                  Thanks for your message! I'll get back to you soon.
-                </div>
-              )}
-              {fetcher.data?.error && (
-                <div className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-500">
-                  {fetcher.data.error}
-                </div>
-              )}
-
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-light text-white/60"
-                  >
-                    Name
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    autoComplete="name"
-                    onBlur={(event) =>
-                      validateField("name", event.target.value)
-                    }
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
-                    placeholder="Your name"
-                  />
-                  {errors.name && (
-                    <span className="mt-2 block text-sm text-red-400">
-                      {errors.name}
-                    </span>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-light text-white/60"
-                  >
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    onBlur={(event) =>
-                      validateField("email", event.target.value)
-                    }
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
-                    placeholder="your@email.com"
-                  />
-                  {errors.email && (
-                    <span className="mt-2 block text-sm text-red-400">
-                      {errors.email}
-                    </span>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-light text-white/60"
-                  >
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={5}
-                    onBlur={(event) =>
-                      validateField("message", event.target.value)
-                    }
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
-                    placeholder="Your message..."
-                  />
-                  {errors.message && (
-                    <span className="mt-2 block text-sm text-red-400">
-                      {errors.message}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={fetcher.state !== "idle"}
-                className="rounded-lg bg-accent/10 px-8 py-3 text-sm font-light text-accent transition-colors hover:bg-accent/20 disabled:opacity-50"
+              <form
+                ref={formRef}
+                onSubmit={handleSubmit}
+                className="mx-auto max-w-xl space-y-6"
               >
-                {fetcher.state !== "idle" ? "Sending..." : "Send Message"}
-              </button>
-            </form>
+                {isSuccess && (
+                  <div className="rounded-lg bg-green-500/10 px-4 py-3 text-sm text-green-500">
+                    Thanks for your message! I’ll get back to you soon.
+                  </div>
+                )}
+                {fetcher.data?.error && (
+                  <div className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-500">
+                    {fetcher.data.error}
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-light text-white/60"
+                    >
+                      Name
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      autoComplete="name"
+                      onBlur={(event) =>
+                        validateField("name", event.target.value)
+                      }
+                      className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+                      placeholder="Your name"
+                    />
+                    {errors.name && (
+                      <span className="mt-2 block text-sm text-red-400">
+                        {errors.name}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-light text-white/60"
+                    >
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      onBlur={(event) =>
+                        validateField("email", event.target.value)
+                      }
+                      className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+                      placeholder="your@email.com"
+                    />
+                    {errors.email && (
+                      <span className="mt-2 block text-sm text-red-400">
+                        {errors.email}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-light text-white/60"
+                    >
+                      Message
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={5}
+                      onBlur={(event) =>
+                        validateField("message", event.target.value)
+                      }
+                      className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+                      placeholder="Your message..."
+                    />
+                    {errors.message && (
+                      <span className="mt-2 block text-sm text-red-400">
+                        {errors.message}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={fetcher.state !== "idle"}
+                  className="rounded-lg bg-accent/10 px-8 py-3 text-sm font-light text-accent transition-colors hover:bg-accent/20 disabled:opacity-50"
+                >
+                  {fetcher.state !== "idle" ? "Sending..." : "Send Message"}
+                </button>
+              </form>
+            </GoogleReCaptchaProvider>
           </section>
         </main>
       </div>

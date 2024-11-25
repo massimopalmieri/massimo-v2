@@ -36,20 +36,20 @@ const RATE_LIMIT = {
 
 export function checkRateLimit(ip: string): {
   allowed: boolean;
-  error?: string;
+  error: string | null;
 } {
   const now = Date.now();
   const record = rateLimitStore.get(ip);
 
   // Allow all requests in test environment
   if (process.env.NODE_ENV === "development") {
-    return { allowed: true };
+    return { allowed: true, error: null };
   }
 
   // Clean up old records
   if (record && now - record.timestamp > RATE_LIMIT.WINDOW) {
     rateLimitStore.delete(ip);
-    return { allowed: true };
+    return { allowed: true, error: null };
   }
 
   // Check if blocked
@@ -63,10 +63,10 @@ export function checkRateLimit(ip: string): {
       };
     }
     rateLimitStore.delete(ip);
-    return { allowed: true };
+    return { allowed: true, error: null };
   }
 
-  return { allowed: true };
+  return { allowed: true, error: null };
 }
 
 export function incrementRateLimit(ip: string) {

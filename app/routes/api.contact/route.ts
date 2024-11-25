@@ -63,7 +63,10 @@ export async function action({ request }: Route.ActionArgs) {
     const recaptchaResult = await verifyRecaptcha(recaptchaToken);
 
     if (!recaptchaResult.success || recaptchaResult.score < 0.5) {
-      return data({ error: "Spam detection triggered" }, { status: 400 });
+      return data(
+        { success: false, error: "Spam detection triggered" },
+        { status: 400 }
+      );
     }
 
     // Validate email
@@ -76,7 +79,10 @@ export async function action({ request }: Route.ActionArgs) {
       emailValidation.is_catchall_email.value ||
       Number(emailValidation.quality_score) < 0.7
     ) {
-      return data({ error: "Invalid email address" }, { status: 400 });
+      return data(
+        { success: false, error: "Invalid email address" },
+        { status: 400 }
+      );
     }
 
     await resend.emails.send({
@@ -98,7 +104,7 @@ ${message}
     // Increment rate limit counter after successful submission
     incrementRateLimit(ip);
 
-    return { success: true };
+    return { success: true, error: null };
   } catch (error) {
     console.error("Contact form error:", error);
     return data(
