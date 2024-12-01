@@ -281,15 +281,16 @@ export default function Index() {
               transition={{ delay: 0.2 }}
               className="mx-auto max-w-3xl"
             >
-              <h1 className="animate-gradient bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-white/50 dark:to-white bg-clip-text text-transparent font-light tracking-tight text-6xl sm:text-7xl mb-4">
-                Massimo Palmieri
+              <h1 className="animate-gradient bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-white/50 dark:to-white bg-clip-text text-transparent text-[120px] font-semibold leading-none mb-8">
+                <span className="block">Hello, I’m</span>
+                <span className="block">Massimo</span>
               </h1>
 
               <div className="max-w-xl">
                 <p className="text-lg font-light leading-relaxed text-zinc-600 dark:text-white/60">
-                  Lead Web Developer crafting high-performance applications with
-                  modern JavaScript. Passionate about clean architecture and
-                  exceptional user experiences.
+                  Senior Web Developer crafting high-performance applications
+                  with modern JavaScript. Passionate about clean architecture
+                  and exceptional user experiences.
                 </p>
               </div>
             </motion.div>
