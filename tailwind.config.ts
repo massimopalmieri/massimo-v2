@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 import { isChristmasSeason } from "./app/utils/dates";
 
 export default {
+  darkMode: "class",
   content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {

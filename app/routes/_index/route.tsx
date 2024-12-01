@@ -2,13 +2,14 @@ import { type ReactNode, useRef, useState, useEffect } from "react";
 import data from "~/data.json";
 import { motion } from "framer-motion";
 import { z } from "zod";
-import { useFetcher } from "react-router";
-import { useRootLoaderData } from "~/root";
+import { useFetcher, useRouteLoaderData } from "react-router";
+import { loader } from "~/root";
 import { trackEvent } from "~/utils/analytics";
 import { isChristmasSeason } from "~/utils/dates";
 import { action } from "../api.contact/route";
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 import invariant from "tiny-invariant";
+import { useTheme } from "~/utils/theme";
 
 const formatter = new Intl.DateTimeFormat("en-GB", {
   month: "short",
@@ -31,33 +32,12 @@ function SectionTitle({ children }: { children: ReactNode }) {
       viewport={{ once: true }}
       className="mb-16 flex items-center gap-4"
     >
-      <h2 className="text-base uppercase tracking-wider text-white/40">
+      <h2 className="text-base uppercase tracking-wider text-zinc-500 dark:text-white/40">
         {children}
       </h2>
       <div className="h-px flex-1 bg-gradient-to-r from-accent/20 to-transparent" />
     </motion.div>
   );
-}
-
-const scrollToContact = (event: React.MouseEvent<HTMLAnchorElement>) => {
-  event.preventDefault();
-  document.getElementById("contact")?.scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-  });
-};
-
-declare global {
-  interface Window {
-    grecaptcha: {
-      ready: (cb: () => void) => void;
-      execute: (
-        siteKey: string,
-        options: { action: string }
-      ) => Promise<string>;
-      render: (element: HTMLElement, options: { sitekey: string }) => void;
-    };
-  }
 }
 
 function SnowAnimation() {
@@ -95,13 +75,10 @@ export default function Index() {
     Partial<Record<keyof ContactForm, string>>
   >({});
   const [isSuccess, setIsSuccess] = useState(false);
-  const [showContactButton, setShowContactButton] = useState(true);
-
-  const rootLoaderData = useRootLoaderData();
-
+  const rootLoaderData = useRouteLoaderData<typeof loader>("root");
   invariant(rootLoaderData, "Root loader data is undefined");
-
   const { RECAPTCHA_SITE_KEY } = rootLoaderData.ENV;
+  const { theme, toggleTheme } = useTheme();
 
   const validateField = (name: keyof ContactForm, value: string) => {
     const result = contactSchema.shape[name].safeParse(value);
@@ -187,41 +164,21 @@ export default function Index() {
     }
   }, [fetcher.state, fetcher.data]);
 
-  // useEffect(() => {
-  //   if (!RECAPTCHA_SITE_KEY) return;
-
-  //   const script = document.createElement("script");
-  //   script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
-  //   document.body.appendChild(script);
-
-  //   return () => {
-  //     document.body.removeChild(script);
-  //   };
-  // }, [RECAPTCHA_SITE_KEY]);
-
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setShowContactButton(!entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
+    if (!RECAPTCHA_SITE_KEY) return;
 
-    const contactSection = document.getElementById("contact");
-    if (contactSection) {
-      observer.observe(contactSection);
-    }
+    const script = document.createElement("script");
+    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    document.body.appendChild(script);
 
     return () => {
-      if (contactSection) {
-        observer.unobserve(contactSection);
-      }
+      document.body.removeChild(script);
     };
-  }, []);
+  }, [RECAPTCHA_SITE_KEY]);
 
   return (
     <div
-      className="relative min-h-screen bg-zinc-950 selection:bg-accent/30"
+      className="relative min-h-screen bg-white dark:bg-zinc-950 selection:bg-accent/30"
       style={{
         WebkitTapHighlightColor: "transparent",
       }}
@@ -230,7 +187,7 @@ export default function Index() {
       {/* Enhanced background gradients */}
       <div className="pointer-events-none fixed inset-0">
         {/* Main gradient */}
-        <div className="absolute inset-0 bg-gradient-radial-hero" />
+        <div className="absolute inset-0 bg-gradient-radial-hero dark:opacity-100 opacity-50" />
 
         {/* Secondary subtle gradients */}
         <div
@@ -239,12 +196,12 @@ export default function Index() {
             background: `
               radial-gradient(
                 circle at 20% 50%, 
-                rgba(120, 119, 198, 0.05) 0%, 
+                rgba(120, 119, 198, 0.03) 0%, 
                 transparent 50%
               ),
               radial-gradient(
                 circle at 80% 80%, 
-                bg-accent/5 0%, 
+                rgba(120, 119, 198, 0.03) 0%, 
                 transparent 50%
               )
             `,
@@ -275,30 +232,47 @@ export default function Index() {
       <div className="relative mx-auto max-w-screen-xl px-6 pb-32">
         {/* Header */}
         <header className="relative min-h-screen">
-          {/* Floating Contact Button */}
-          <motion.a
-            href="#contact"
-            onClick={scrollToContact}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: showContactButton ? 1 : 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-8 right-8 z-50 flex items-center gap-2 rounded-full bg-accent/20 pl-4 pr-5 py-3 text-accent transition-colors hover:bg-accent/30 group"
-          >
-            <span className="text-sm font-light">Contact me</span>
-            <svg
-              className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="fixed top-8 right-8 z-50 flex items-center gap-4">
+            <motion.button
+              onClick={toggleTheme}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="rounded-full bg-accent/20 p-3 text-accent transition-colors hover:bg-accent/30"
+              aria-label={`Switch to ${
+                theme === "dark" ? "light" : "dark"
+              } mode`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-              />
-            </svg>
-          </motion.a>
+              {theme === "dark" ? (
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                  />
+                </svg>
+              )}
+            </motion.button>
+          </div>
 
           <div className="flex min-h-screen items-center justify-center">
             <motion.div
@@ -307,12 +281,12 @@ export default function Index() {
               transition={{ delay: 0.2 }}
               className="mx-auto max-w-3xl"
             >
-              <h1 className="animate-gradient bg-gradient-to-r from-white via-white/50 to-white bg-clip-text text-transparent font-light tracking-tight text-6xl sm:text-7xl mb-4">
+              <h1 className="animate-gradient bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-white/50 dark:to-white bg-clip-text text-transparent font-light tracking-tight text-6xl sm:text-7xl mb-4">
                 Massimo Palmieri
               </h1>
 
               <div className="max-w-xl">
-                <p className="text-lg font-light leading-relaxed text-white/60">
+                <p className="text-lg font-light leading-relaxed text-zinc-600 dark:text-white/60">
                   Lead Web Developer crafting high-performance applications with
                   modern JavaScript. Passionate about clean architecture and
                   exceptional user experiences.
@@ -352,7 +326,7 @@ export default function Index() {
                           "0"
                         )}
                       </span>
-                      <h3 className="mt-2 text-5xl font-light tracking-tight text-white/40 transition-colors duration-300 group-hover:text-white whitespace-nowrap">
+                      <h3 className="mt-2 text-5xl font-light tracking-tight text-zinc-700 dark:text-white/40 transition-colors duration-300 group-hover:text-zinc-900 dark:group-hover:text-white whitespace-nowrap">
                         {skill}
                       </h3>
                     </div>
@@ -368,14 +342,14 @@ export default function Index() {
 
             <div className="relative space-y-24">
               {/* Timeline line - keep it at exactly 180px */}
-              <div className="absolute bottom-0 md:left-[180px] top-0 w-px bg-accent/20" />
+              <div className="absolute bottom-0 md:left-[180px] top-0 w-px bg-zinc-200 dark:bg-accent/20" />
 
               {data.history.map((job, index) => (
                 <motion.article
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.05 }}
                   key={index}
                   className="group relative grid gap-8 md:grid-cols-[180px_1fr] ml-8 md:ml-0"
                 >
@@ -389,16 +363,16 @@ export default function Index() {
                         ? formatter.format(new Date(job.end))
                         : "Present"}
                     </div>
-                    <div className="text-sm font-light text-white/60">
+                    <div className="text-sm font-light text-zinc-600 dark:text-white/60">
                       {job.title}
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="mb-6 text-lg font-light text-white  transition-colors">
+                    <h3 className="mb-6 text-lg font-light text-zinc-800 dark:text-white transition-colors">
                       {job.employer}
                     </h3>
-                    <ul className="space-y-3 text-white/60">
+                    <ul className="space-y-3 text-zinc-600 dark:text-white/60">
                       {job.achievements.map((achievement) => (
                         <li
                           key={achievement}
@@ -418,7 +392,7 @@ export default function Index() {
           {/* Education section - similar updates to Experience section */}
           {/* ... */}
 
-          <section id="contact">
+          <section>
             <SectionTitle>Contact</SectionTitle>
 
             <GoogleReCaptchaProvider
@@ -450,7 +424,7 @@ export default function Index() {
                   <div className="space-y-2">
                     <label
                       htmlFor="name"
-                      className="block text-sm font-light text-white/60"
+                      className="block text-sm font-light text-zinc-600 dark:text-white/60"
                     >
                       Name
                     </label>
@@ -462,7 +436,7 @@ export default function Index() {
                       onBlur={(event) =>
                         validateField("name", event.target.value)
                       }
-                      className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+                      className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
                       placeholder="Your name"
                     />
                     {errors.name && (
@@ -475,7 +449,7 @@ export default function Index() {
                   <div className="space-y-2">
                     <label
                       htmlFor="email"
-                      className="block text-sm font-light text-white/60"
+                      className="block text-sm font-light text-zinc-600 dark:text-white/60"
                     >
                       Email
                     </label>
@@ -487,7 +461,7 @@ export default function Index() {
                       onBlur={(event) =>
                         validateField("email", event.target.value)
                       }
-                      className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+                      className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
                       placeholder="your@email.com"
                     />
                     {errors.email && (
@@ -500,7 +474,7 @@ export default function Index() {
                   <div className="space-y-2">
                     <label
                       htmlFor="message"
-                      className="block text-sm font-light text-white/60"
+                      className="block text-sm font-light text-zinc-600 dark:text-white/60"
                     >
                       Message
                     </label>
@@ -511,7 +485,7 @@ export default function Index() {
                       onBlur={(event) =>
                         validateField("message", event.target.value)
                       }
-                      className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-light text-white placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+                      className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
                       placeholder="Your message..."
                     />
                     {errors.message && (

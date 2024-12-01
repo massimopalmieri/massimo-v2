@@ -49,7 +49,7 @@ describe("Rate Limiting", () => {
     process.env.NODE_ENV = "development";
 
     const ip = "127.0.0.1";
-    
+
     for (let i = 0; i < 10; i++) {
       incrementRateLimit(ip);
       const result = checkRateLimit(ip);
@@ -60,96 +60,98 @@ describe("Rate Limiting", () => {
   });
 });
 
-describe('verifyRecaptcha', () => {
+describe("verifyRecaptcha", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
-  test('verifies valid token successfully', async () => {
+  test("verifies valid token successfully", async () => {
     const mockResponse = {
       success: true,
       score: 0.9,
-      action: 'submit',
-      challenge_ts: '2024-03-19T12:00:00Z',
-      hostname: 'yoursite.com'
+      action: "submit",
+      challenge_ts: "2024-03-19T12:00:00Z",
+      hostname: "yoursite.com",
     };
 
     global.fetch = vi.fn().mockResolvedValue({
-      json: () => Promise.resolve(mockResponse)
+      json: () => Promise.resolve(mockResponse),
     });
 
-    const result = await verifyRecaptcha('valid-token');
+    const result = await verifyRecaptcha("valid-token");
     expect(result.success).toBe(true);
     expect(result.score).toBe(0.9);
   });
 
-  test('handles invalid token', async () => {
+  test("handles invalid token", async () => {
     const mockResponse = {
       success: false,
-      'error-codes': ['invalid-input-response']
+      "error-codes": ["invalid-input-response"],
     };
 
     global.fetch = vi.fn().mockResolvedValue({
-      json: () => Promise.resolve(mockResponse)
+      json: () => Promise.resolve(mockResponse),
     });
 
-    const result = await verifyRecaptcha('invalid-token');
+    const result = await verifyRecaptcha("invalid-token");
     expect(result.success).toBe(false);
   });
 
-  test('handles network error', async () => {
-    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+  test("handles network error", async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
 
-    await expect(verifyRecaptcha('token')).rejects.toThrow('Network error');
+    await expect(verifyRecaptcha("token")).rejects.toThrow("Network error");
   });
 });
 
-describe('validateEmail', () => {
+describe("validateEmail", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
-  test('validates legitimate email successfully', async () => {
+  test("validates legitimate email successfully", async () => {
     const mockResponse = {
-      email: 'test@example.com',
-      deliverability: 'DELIVERABLE',
-      quality_score: '0.8',
+      email: "test@example.com",
+      deliverability: "DELIVERABLE",
+      quality_score: "0.8",
       is_valid_format: { value: true },
       is_disposable_email: { value: false },
-      is_smtp_valid: { value: true }
+      is_smtp_valid: { value: true },
     };
 
     global.fetch = vi.fn().mockResolvedValue({
-      json: () => Promise.resolve(mockResponse)
+      json: () => Promise.resolve(mockResponse),
     });
 
-    const result = await validateEmail('test@example.com');
-    expect(result.deliverability).toBe('DELIVERABLE');
+    const result = await validateEmail("test@example.com");
+    expect(result.deliverability).toBe("DELIVERABLE");
     expect(result.is_valid_format.value).toBe(true);
   });
 
-  test('handles invalid email format', async () => {
+  test("handles invalid email format", async () => {
     const mockResponse = {
-      email: 'invalid-email',
-      deliverability: 'UNDELIVERABLE',
-      quality_score: '0.0',
+      email: "invalid-email",
+      deliverability: "UNDELIVERABLE",
+      quality_score: "0.0",
       is_valid_format: { value: false },
       is_disposable_email: { value: false },
-      is_smtp_valid: { value: false }
+      is_smtp_valid: { value: false },
     };
 
     global.fetch = vi.fn().mockResolvedValue({
-      json: () => Promise.resolve(mockResponse)
+      json: () => Promise.resolve(mockResponse),
     });
 
-    const result = await validateEmail('invalid-email');
-    expect(result.deliverability).toBe('UNDELIVERABLE');
+    const result = await validateEmail("invalid-email");
+    expect(result.deliverability).toBe("UNDELIVERABLE");
     expect(result.is_valid_format.value).toBe(false);
   });
 
-  test('handles API error', async () => {
-    global.fetch = vi.fn().mockRejectedValue(new Error('API error'));
+  test("handles API error", async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error("API error"));
 
-    await expect(validateEmail('test@example.com')).rejects.toThrow('API error');
+    await expect(validateEmail("test@example.com")).rejects.toThrow(
+      "API error"
+    );
   });
 });
