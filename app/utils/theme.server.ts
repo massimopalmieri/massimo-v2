@@ -1,9 +1,9 @@
-import { getUserPrefsCookie } from "~/cookies.server";
+import {getUserPrefsCookie} from '~/cookies.server'
 
-export type Theme = "light" | "dark";
+export type Theme = 'light' | 'dark'
 
 export async function getTheme(request: Request): Promise<Theme | null> {
-  const cookie = await getUserPrefsCookie(request);
+	const cookie = await getUserPrefsCookie(request)
 
-  return cookie.theme ?? null;
+	return cookie.theme ?? null
 }
