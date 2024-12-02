@@ -2,7 +2,6 @@ import type {Config} from 'tailwindcss'
 import typography from '@tailwindcss/typography'
 import forms from '@tailwindcss/forms'
 import aspectRatio from '@tailwindcss/aspect-ratio'
-import {isChristmasSeason} from './app/utils/dates'
 
 export default {
 	darkMode: 'class',
