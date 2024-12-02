@@ -4,26 +4,26 @@
  * For more information, see https://remix.run/docs/en/main/file-conventions/entry.client
  */
 
-import { HydratedRouter } from "react-router/dom";
-import { startTransition, StrictMode } from "react";
-import { hydrateRoot } from "react-dom/client";
+import {HydratedRouter} from 'react-router/dom'
+import {startTransition, StrictMode} from 'react'
+import {hydrateRoot} from 'react-dom/client'
 
 async function prepareApp() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import("./mocks/browser");
-    return worker.start();
-  }
+	if (import.meta.env.DEV) {
+		const {worker} = await import('./mocks/browser')
+		return worker.start()
+	}
 
-  return Promise.resolve();
+	return Promise.resolve()
 }
 
 prepareApp().then(() => {
-  startTransition(() => {
-    hydrateRoot(
-      document,
-      <StrictMode>
-        <HydratedRouter />
-      </StrictMode>
-    );
-  });
-});
+	startTransition(() => {
+		hydrateRoot(
+			document,
+			<StrictMode>
+				<HydratedRouter />
+			</StrictMode>,
+		)
+	})
+})
