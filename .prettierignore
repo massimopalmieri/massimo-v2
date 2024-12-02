@@ -1,0 +1,6 @@
+.idea
+.react-router
+build
+playwright-report
+public
+test-results
