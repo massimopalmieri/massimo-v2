@@ -48,6 +48,7 @@ function SnowAnimation() {
 				const depth = Math.random()
 				return (
 					<div
+						suppressHydrationWarning={true}
 						key={i}
 						className="snow"
 						style={
@@ -195,13 +196,13 @@ export default function Index() {
 					style={{
 						background: `
               radial-gradient(
-                circle at 20% 50%, 
-                rgba(120, 119, 198, 0.03) 0%, 
+                circle at 20% 50%,
+                rgba(120, 119, 198, 0.03) 0%,
                 transparent 50%
               ),
               radial-gradient(
-                circle at 80% 80%, 
-                rgba(120, 119, 198, 0.03) 0%, 
+                circle at 80% 80%,
+                rgba(120, 119, 198, 0.03) 0%,
                 transparent 50%
               )
             `,
@@ -220,8 +221,8 @@ export default function Index() {
 					style={{
 						background: `
               radial-gradient(
-                circle at center, 
-                transparent 0%, 
+                circle at center,
+                transparent 0%,
                 rgba(0, 0, 0, 0.1) 100%
               )
             `,

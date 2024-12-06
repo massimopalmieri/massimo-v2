@@ -47,6 +47,7 @@ export async function loader({request}: Route.LoaderArgs) {
 			RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY,
 		},
 		// hints: getHints(request),
+
 		theme: theme ?? getHints(request).theme,
 	}
 }
@@ -85,6 +86,7 @@ export function Layout({children}: {children: ReactNode}) {
 				)}
 			</head>
 			<body>
+				
 				{children}
 				<ScrollRestoration />
 				<Scripts />

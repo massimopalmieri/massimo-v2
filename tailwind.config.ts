@@ -9,17 +9,7 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				// Teal - modern, trustworthy, professional
-				// accent: "rgb(45, 212, 191)",
-
-				// Blue - classic, reliable, tech-focused
 				accent: 'rgb(59, 130, 246)',
-
-				// Emerald - fresh, growth-oriented
-				// accent: "rgb(52, 211, 153)",
-
-				// Indigo - elegant, established
-				// accent: "rgb(99, 102, 241)",
 			},
 			fontFamily: {
 				display: ['Inter', 'sans-serif'],
