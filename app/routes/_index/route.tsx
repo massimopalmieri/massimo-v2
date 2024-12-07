@@ -3,10 +3,10 @@ import data from '~/data.json'
 import {motion} from 'framer-motion'
 import {z} from 'zod'
 import {useFetcher, useRouteLoaderData} from 'react-router'
-import {loader} from '~/root'
+import type {loader} from '~/root'
 import {trackEvent} from '~/utils/analytics'
 import {isChristmasSeason} from '~/utils/dates'
-import {action} from '../api.contact/route'
+import type {action} from '../api.contact/route'
 import {GoogleReCaptchaProvider} from 'react-google-recaptcha-v3'
 import invariant from 'tiny-invariant'
 import {useTheme} from '~/utils/theme'
@@ -43,6 +43,7 @@ function SectionTitle({children}: {children: ReactNode}) {
 function SnowAnimation() {
 	return (
 		<div className="fixed inset-0 pointer-events-none z-50">
+			{/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
 			{[...Array(50)].map((_, i) => {
 				// Calculate depth factor (0 to 1)
 				const depth = Math.random()
@@ -144,7 +145,7 @@ export default function Index() {
 				value: 'success',
 			})
 
-			fetcher.submit(formData, {
+			void fetcher.submit(formData, {
 				method: 'POST',
 				action: '/api/contact',
 			})
@@ -408,7 +409,7 @@ export default function Index() {
 						>
 							<form
 								ref={formRef}
-								onSubmit={handleSubmit}
+								onSubmit={void handleSubmit}
 								className="mx-auto max-w-xl space-y-6"
 							>
 								{isSuccess && (

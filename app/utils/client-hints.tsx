@@ -16,9 +16,13 @@ const hintsUtils = getHintUtils({
 export const {getHints} = hintsUtils
 
 export function ClientHintCheck() {
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	const {revalidate} = useRevalidator()
 
-	useEffect(() => subscribeToSchemeChange(() => revalidate()), [revalidate])
+	useEffect(
+		() => subscribeToSchemeChange(() => void revalidate()),
+		[revalidate],
+	)
 
 	return (
 		<script

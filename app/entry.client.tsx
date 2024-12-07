@@ -17,7 +17,7 @@ async function prepareApp() {
 	return Promise.resolve()
 }
 
-prepareApp().then(() => {
+void prepareApp().then(() => {
 	startTransition(() => {
 		hydrateRoot(
 			document,

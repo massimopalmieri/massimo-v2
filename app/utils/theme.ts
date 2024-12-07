@@ -17,7 +17,10 @@ export function useTheme() {
 		document.documentElement.classList.toggle('dark', newTheme === 'dark')
 
 		// Save theme preference via cookie
-		fetcher.submit({theme: newTheme}, {method: 'post', action: '/api/theme'})
+		void fetcher.submit(
+			{theme: newTheme},
+			{method: 'post', action: '/api/theme'},
+		)
 	}
 
 	return {theme, toggleTheme}
