@@ -10,5 +10,8 @@ export default defineConfig({
 			plugins: [tailwindcss, autoprefixer],
 		},
 	},
+	optimizeDeps: {
+		exclude: ['nock', 'mock-aws-s3', 'aws-sdk', '@mapbox'],
+	},
 	plugins: [reactRouter(), tsconfigPaths()],
 })

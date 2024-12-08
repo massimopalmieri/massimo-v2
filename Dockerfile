@@ -24,6 +24,10 @@ RUN apt-get update -qq && \
 COPY package-lock.json package.json ./
 RUN npm ci --include=dev --legacy-peer-deps
 
+# Generate Prisma Client
+COPY --link prisma .
+RUN npx prisma generate
+
 # Copy application code
 COPY . .
 

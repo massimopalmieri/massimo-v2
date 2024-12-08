@@ -22,7 +22,7 @@ export default tseslint.config(
 		},
 	},
 	eslint.configs.recommended,
-	tseslint.configs.recommendedTypeChecked,
+	tseslint.configs.recommended,
 	pluginReact.configs.flat.recommended,
 	{
 		languageOptions: {
@@ -34,6 +34,18 @@ export default tseslint.config(
 		rules: {
 			'@typescript-eslint/consistent-type-exports': 'error',
 			'@typescript-eslint/consistent-type-imports': 'error',
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					args: 'all',
+					argsIgnorePattern: '^_',
+					caughtErrors: 'all',
+					caughtErrorsIgnorePattern: '^_',
+					destructuredArrayIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+					ignoreRestSiblings: true,
+				},
+			],
 			'react/react-in-jsx-scope': 'off',
 		},
 	},

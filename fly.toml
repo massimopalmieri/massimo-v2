@@ -8,6 +8,9 @@ primary_region = 'cdg'
 
 [build]
 
+[env]
+  DATABASE_URL = 'file:./data/sqlite.db'
+
 [http_service]
   internal_port = 3000
   force_https = true

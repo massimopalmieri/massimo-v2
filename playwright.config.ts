@@ -80,6 +80,7 @@ export default defineConfig({
 			RECAPTCHA_SITE_KEY: '6LfCBYkqAAAAACe41nVkwfVHG9nbuYKV80FZpePC',
 			RECAPTCHA_SECRET_KEY: '6LfCBYkqAAAAAKZ_X16PeJ1hGwHbiTsMIPKQd_mQ',
 			ABSTRACT_API_KEY: '123-123',
+			DATABASE_URL: 'file:./data.db',
 		},
 	},
 })
