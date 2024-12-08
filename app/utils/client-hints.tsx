@@ -18,7 +18,10 @@ export const {getHints} = hintsUtils
 export function ClientHintCheck() {
 	const {revalidate} = useRevalidator()
 
-	useEffect(() => subscribeToSchemeChange(() => revalidate()), [revalidate])
+	useEffect(
+		() => subscribeToSchemeChange(() => void revalidate()),
+		[revalidate],
+	)
 
 	return (
 		<script

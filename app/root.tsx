@@ -6,12 +6,12 @@ import {
 	ScrollRestoration,
 	useRouteLoaderData,
 	isRouteErrorResponse,
+	useLocation,
 } from 'react-router'
-
 import stylesheet from './app.css?url'
-import {ReactNode} from 'react'
+import type {ReactNode} from 'react'
 import invariant from 'tiny-invariant'
-import {Route} from './+types/root'
+import type {Route} from './+types/root'
 import {ClientHintCheck, getHints} from './utils/client-hints'
 import {getTheme} from './utils/theme.server'
 
@@ -46,8 +46,6 @@ export async function loader({request}: Route.LoaderArgs) {
 		ENV: {
 			RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY,
 		},
-		// hints: getHints(request),
-
 		theme: theme ?? getHints(request).theme,
 	}
 }
@@ -56,9 +54,10 @@ export function Layout({children}: {children: ReactNode}) {
 	const rootLoaderData = useRouteLoaderData<typeof loader>('root')
 	invariant(rootLoaderData, 'root loader data is missing')
 	const {theme} = rootLoaderData
+	const location = useLocation()
 
 	return (
-		<html lang="en" className={theme}>
+		<html lang="en" className={location.pathname === '/' ? theme : ''}>
 			<head>
 				<ClientHintCheck />
 				<Meta />
@@ -86,7 +85,6 @@ export function Layout({children}: {children: ReactNode}) {
 				)}
 			</head>
 			<body>
-				
 				{children}
 				<ScrollRestoration />
 				<Scripts />
