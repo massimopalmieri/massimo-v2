@@ -1,0 +1,44 @@
+name: Deploy PR Environment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Fly.io CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Authenticate with Fly.io
+        run: flyctl auth login --access-token ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Deploy ephemeral environment
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          cp fly.toml fly-pr-${PR_NUMBER}.toml
+          sed -i "s/{{PR_NUMBER}}/${PR_NUMBER}/g" fly-pr-${PR_NUMBER}.toml
+          flyctl deploy -c fly-pr-${PR_NUMBER}.toml
+
+  cleanup:
+    if: ${{ github.event.pull_request.merged || github.event.pull_request.closed_at }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Fly.io CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Authenticate with Fly.io
+        run: flyctl auth login --access-token ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Destroy ephemeral environment
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          flyctl apps destroy my-app-pr-${PR_NUMBER} --yes

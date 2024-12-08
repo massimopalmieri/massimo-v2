@@ -8,6 +8,7 @@ import {
 	validateEmail,
 	verifyRecaptcha,
 } from './utils'
+import invariant from 'tiny-invariant'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -79,9 +80,11 @@ export async function action({request}: Route.ActionArgs) {
 			)
 		}
 
+		invariant(process.env.ADMIN_EMAIL, 'ADMIN_EMAIL is not set')
+
 		await resend.emails.send({
 			from: 'Contact Form <onboarding@resend.dev>',
-			to: 'massimopalmieri@gmail.com',
+			to: process.env.ADMIN_EMAIL,
 			subject: `New Contact Form Message from ${name}`,
 			text: `
 Name: ${name}

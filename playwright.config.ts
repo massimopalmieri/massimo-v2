@@ -80,6 +80,10 @@ export default defineConfig({
 			RECAPTCHA_SITE_KEY: '6LfCBYkqAAAAACe41nVkwfVHG9nbuYKV80FZpePC',
 			RECAPTCHA_SECRET_KEY: '6LfCBYkqAAAAAKZ_X16PeJ1hGwHbiTsMIPKQd_mQ',
 			ABSTRACT_API_KEY: '123-123',
+			DATABASE_URL: 'file:./data.db',
+			SESSION_SECRET: 'my-sup3r-s3cr3t',
+			ADMIN_EMAIL: 'admin@massimopalmieri.com',
+			ADMIN_PASSWORD: 'password',
 		},
 	},
 })

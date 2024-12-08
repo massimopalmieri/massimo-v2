@@ -43,7 +43,6 @@ function SectionTitle({children}: {children: ReactNode}) {
 function SnowAnimation() {
 	return (
 		<div className="fixed inset-0 pointer-events-none z-50">
-			{/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
 			{[...Array(50)].map((_, i) => {
 				// Calculate depth factor (0 to 1)
 				const depth = Math.random()
@@ -145,7 +144,7 @@ export default function Index() {
 				value: 'success',
 			})
 
-			void fetcher.submit(formData, {
+			fetcher.submit(formData, {
 				method: 'POST',
 				action: '/api/contact',
 			})
@@ -409,7 +408,7 @@ export default function Index() {
 						>
 							<form
 								ref={formRef}
-								onSubmit={void handleSubmit}
+								onSubmit={handleSubmit}
 								className="mx-auto max-w-xl space-y-6"
 							>
 								{isSuccess && (

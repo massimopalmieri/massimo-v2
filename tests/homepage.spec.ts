@@ -1,4 +1,4 @@
-import type { Page} from '@playwright/test';
+import type {Page} from '@playwright/test'
 import {test, expect} from '@playwright/test'
 
 // Function to wait for reCAPTCHA script to load
@@ -38,7 +38,7 @@ test.describe('Index Page', () => {
 	})
 })
 
-test('test', async ({page}) => {
+test('should have the correct content', async ({page}) => {
 	await page.goto('/')
 	await expect(page.getByRole('banner')).toMatchAriaSnapshot(`
     - heading "Hello, I’m Massimo" [level=1]
