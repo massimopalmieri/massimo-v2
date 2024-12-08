@@ -35,7 +35,7 @@ function SectionTitle({children}: {children: ReactNode}) {
 			<h2 className="text-base uppercase tracking-wider text-zinc-500 dark:text-white/40">
 				{children}
 			</h2>
-			<div className="h-px flex-1 bg-gradient-to-r from-accent/20 to-transparent" />
+			<div className="h-px flex-1 bg-linear-to-r from-accent/20 to-transparent" />
 		</motion.div>
 	)
 }
@@ -43,7 +43,6 @@ function SectionTitle({children}: {children: ReactNode}) {
 function SnowAnimation() {
 	return (
 		<div className="fixed inset-0 pointer-events-none z-50">
-			{/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
 			{[...Array(50)].map((_, i) => {
 				// Calculate depth factor (0 to 1)
 				const depth = Math.random()
@@ -145,7 +144,7 @@ export default function Index() {
 				value: 'success',
 			})
 
-			void fetcher.submit(formData, {
+			fetcher.submit(formData, {
 				method: 'POST',
 				action: '/api/contact',
 			})
@@ -231,7 +230,7 @@ export default function Index() {
 				/>
 			</div>
 
-			<div className="relative mx-auto max-w-screen-xl px-6 pb-32">
+			<div className="relative mx-auto max-w-(--breakpoint-xl) px-6 pb-32">
 				{/* Header */}
 				<header className="relative min-h-screen">
 					<div className="fixed top-8 right-8 z-50 flex items-center gap-4">
@@ -283,7 +282,7 @@ export default function Index() {
 							transition={{delay: 0.2}}
 							className="mx-auto max-w-3xl"
 						>
-							<h1 className="animate-gradient bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-white/50 dark:to-white bg-clip-text text-transparent text-[120px] font-semibold leading-none mb-8">
+							<h1 className="animate-gradient bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-white/50 dark:to-white bg-clip-text text-transparent text-[120px] font-semibold leading-none mb-8">
 								<span className="block">Hello, I’m</span>
 								<span className="block">Massimo</span>
 							</h1>
@@ -409,7 +408,7 @@ export default function Index() {
 						>
 							<form
 								ref={formRef}
-								onSubmit={void handleSubmit}
+								onSubmit={handleSubmit}
 								className="mx-auto max-w-xl space-y-6"
 							>
 								{isSuccess && (
@@ -439,7 +438,7 @@ export default function Index() {
 											onBlur={(event) =>
 												validateField('name', event.target.value)
 											}
-											className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+											className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-hidden ring-accent/50 transition-shadow focus:ring-2"
 											placeholder="Your name"
 										/>
 										{errors.name && (
@@ -464,7 +463,7 @@ export default function Index() {
 											onBlur={(event) =>
 												validateField('email', event.target.value)
 											}
-											className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+											className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-hidden ring-accent/50 transition-shadow focus:ring-2"
 											placeholder="your@email.com"
 										/>
 										{errors.email && (
@@ -488,7 +487,7 @@ export default function Index() {
 											onBlur={(event) =>
 												validateField('message', event.target.value)
 											}
-											className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
+											className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-hidden ring-accent/50 transition-shadow focus:ring-2"
 											placeholder="Your message..."
 										/>
 										{errors.message && (

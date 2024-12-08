@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: CI
 on:
   push:
     branches: [main, master]
@@ -20,7 +20,7 @@ jobs:
         run: npm run lint
 
       - name: Run Prettier
-        run: npm run prettier -- --check .
+        run: npm run format
 
       - name: Run Vitest
         run: npm run test
