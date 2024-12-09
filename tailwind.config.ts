@@ -4,7 +4,7 @@ import forms from '@tailwindcss/forms'
 import aspectRatio from '@tailwindcss/aspect-ratio'
 
 export default {
-	darkMode: 'class',
+	darkMode: 'selector',
 	content: ['./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}'],
 	theme: {
 		extend: {

@@ -1,5 +1,5 @@
 import {data} from 'react-router'
-import {Route} from './+types/api.theme'
+import type {Route} from './+types/api.theme'
 import {getUserPrefsCookie, userPrefsCookie} from '~/cookies.server'
 
 export async function action({request}: Route.ActionArgs) {

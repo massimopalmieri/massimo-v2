@@ -1,4 +1,5 @@
-import {test, expect, Page} from '@playwright/test'
+import type {Page} from '@playwright/test'
+import {test, expect} from '@playwright/test'
 
 // Function to wait for reCAPTCHA script to load
 async function waitForRecaptcha(page: Page) {
@@ -35,4 +36,12 @@ test.describe('Index Page', () => {
 		await page.getByRole('button', {name: 'Send Message'}).click()
 		await expect(page.getByText('Thanks for your message! I’ll')).toBeVisible()
 	})
+})
+
+test('should have the correct content', async ({page}) => {
+	await page.goto('/')
+	await expect(page.getByRole('banner')).toMatchAriaSnapshot(`
+    - heading "Hello, I’m Massimo" [level=1]
+    - paragraph: Senior Web Developer crafting high-performance applications with modern JavaScript. Passionate about clean architecture and exceptional user experiences.
+    `)
 })
