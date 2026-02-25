@@ -43,10 +43,6 @@ body {
 	@apply bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100;
 }
 
-.grecaptcha-badge {
-	visibility: hidden !important;
-}
-
 @keyframes gradient {
 	0% {
 		background-position: 0% 50%;

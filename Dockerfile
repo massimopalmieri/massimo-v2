@@ -4,9 +4,9 @@
 ARG NODE_VERSION=24.0.0
 FROM node:${NODE_VERSION}-slim as base
 
-LABEL fly_launch_runtime="Node.js/Prisma"
+LABEL app_runtime="Node.js"
 
-# Node.js/Prisma app lives here
+# App lives here
 WORKDIR /app
 
 # Set production environment
@@ -23,10 +23,6 @@ RUN apt-get update -qq && \
 # Install node modules
 COPY package-lock.json package.json ./
 RUN npm ci --include=dev --legacy-peer-deps
-
-# Generate Prisma Client
-COPY prisma .
-RUN npx prisma generate
 
 # Copy application code
 COPY . .
@@ -48,14 +44,6 @@ RUN apt-get update -qq && \
 # Copy built application
 COPY --from=build /app /app
 
-# Setup sqlite3 on a separate volume
-RUN mkdir -p /data
-VOLUME /data
-
-# Entrypoint prepares the database.
-ENTRYPOINT [ "/app/docker-entrypoint.js" ]
-
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-ENV DATABASE_URL="file:///data/sqlite.db"
 CMD [ "npm", "run", "start" ]
