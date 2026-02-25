@@ -1,11 +1,10 @@
 import {PassThrough} from 'node:stream'
-
-import type {EntryContext} from 'react-router'
 import {createReadableStreamFromReadable} from '@react-router/node'
-import {ServerRouter} from 'react-router'
 import * as isbotModule from 'isbot'
 import {renderToPipeableStream} from 'react-dom/server'
+import {ServerRouter} from 'react-router'
 import {server} from './mocks/node'
+import type {EntryContext} from 'react-router'
 
 const ABORT_DELAY = 5_000
 
@@ -61,7 +60,6 @@ function handleBotRequest(
 			<ServerRouter
 				context={reactRouterContext}
 				url={request.url}
-				abortDelay={ABORT_DELAY}
 			/>,
 			{
 				onAllReady() {
@@ -111,7 +109,6 @@ function handleBrowserRequest(
 			<ServerRouter
 				context={reactRouterContext}
 				url={request.url}
-				abortDelay={ABORT_DELAY}
 			/>,
 			{
 				onShellReady() {

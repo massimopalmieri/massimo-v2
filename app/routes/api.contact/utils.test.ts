@@ -1,9 +1,9 @@
-import {describe, test, expect, vi, beforeEach} from 'vitest'
+import {beforeEach, describe, expect, test, vi} from 'vitest'
 import {
 	checkRateLimit,
 	incrementRateLimit,
-	verifyRecaptcha,
 	validateEmail,
+	verifyRecaptcha,
 } from './utils'
 
 describe('Rate Limiting', () => {

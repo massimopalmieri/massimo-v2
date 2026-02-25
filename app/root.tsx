@@ -4,16 +4,16 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	useRouteLoaderData,
 	isRouteErrorResponse,
 	useLocation,
+	useRouteLoaderData,
 } from 'react-router'
-import stylesheet from './app.css?url'
-import type {ReactNode} from 'react'
 import invariant from 'tiny-invariant'
-import type {Route} from './+types/root'
+import stylesheet from './app.css?url'
 import {ClientHintCheck, getHints} from './utils/client-hints'
 import {getTheme} from './utils/theme.server'
+import type {Route} from './+types/root'
+import type {ReactNode} from 'react'
 
 export const meta: Route.MetaFunction = () => {
 	return [
@@ -57,7 +57,7 @@ export function Layout({children}: {children: ReactNode}) {
 	const location = useLocation()
 
 	return (
-		<html lang="en" className={location.pathname === '/' ? theme : ''}>
+		<html lang="en" className={location.pathname === '/' ? theme : theme}>
 			<head>
 				<ClientHintCheck />
 				<Meta />

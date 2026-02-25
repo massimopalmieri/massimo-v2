@@ -1,6 +1,6 @@
 import {data} from 'react-router'
-import type {Route} from './+types/api.theme'
 import {getUserPrefsCookie, userPrefsCookie} from '~/cookies.server'
+import type {Route} from './+types/api.theme'
 
 export async function action({request}: Route.ActionArgs) {
 	const formData = await request.formData()

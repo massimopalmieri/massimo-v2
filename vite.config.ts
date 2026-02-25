@@ -1,8 +1,8 @@
 import {reactRouter} from '@react-router/dev/vite'
+import tailwindcss from '@tailwindcss/vite'
+import autoprefixer from 'autoprefixer'
 import {defineConfig} from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import autoprefixer from 'autoprefixer'
-import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
 	css: {
@@ -13,5 +13,5 @@ export default defineConfig({
 	optimizeDeps: {
 		exclude: ['nock', 'mock-aws-s3', 'aws-sdk', '@mapbox'],
 	},
-	plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+	plugins: [tsconfigPaths(), tailwindcss(), reactRouter()],
 })

@@ -1,4 +1,4 @@
-import {describe, it, expect, afterEach, vi} from 'vitest'
+import {afterEach, describe, expect, it, vi} from 'vitest'
 import {isChristmasSeason} from './dates'
 
 describe('isChristmasSeason', () => {

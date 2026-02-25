@@ -1,9 +1,17 @@
-import {data, Form, redirect} from 'react-router'
-import {authenticator} from '~/services/auth.server'
+import {Form, data, redirect} from 'react-router'
+import {Button} from '~/components/catalyst/button'
+import {
+	ErrorMessage,
+	Field,
+	FieldGroup,
+	Fieldset,
+	Label,
+} from '~/components/catalyst/fieldset'
+import {Input} from '~/components/catalyst/input'
+import {Text} from '~/components/catalyst/text'
+import {AuthenticationError, authenticator} from '~/services/auth.server'
+import {commitSession, getSession} from '~/services/session.server'
 import type {Route} from './+types/login'
-import {getSession, commitSession} from '~/services/session.server'
-import {AuthenticationError} from '~/services/auth.server'
-import {prisma} from '~/db.server'
 
 type ActionData = {
 	error?: string
@@ -17,16 +25,52 @@ export default function Screen({actionData}: Route.ComponentProps) {
 	const {error, fieldErrors} = (actionData || {}) as ActionData
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-linear-to-br from-indigo-500 via-purple-500 to-pink-500">
+		<div className="min-h-screen flex items-center justify-center">
+			<Form method="post" className="mt-8 space-y-6 min-w-sm">
+				{error && <Text color="red">{error}</Text>}
+
+				<Fieldset aria-label="Shipping details">
+					<FieldGroup>
+						<Field>
+							<Label>Email</Label>
+							<Input name="email" invalid={Boolean(fieldErrors?.email)} />
+
+							{fieldErrors?.email && (
+								<ErrorMessage>{fieldErrors.email.join(', ')}</ErrorMessage>
+							)}
+						</Field>
+						<Field>
+							<Label>Password</Label>
+							<Input
+								name="password"
+								invalid={Boolean(fieldErrors?.password)}
+								type="password"
+							/>
+
+							{fieldErrors?.password && (
+								<ErrorMessage>{fieldErrors.password.join(', ')}</ErrorMessage>
+							)}
+						</Field>
+						<div className="flex justify-end">
+							<Button type="submit">Sign in</Button>
+						</div>
+					</FieldGroup>
+				</Fieldset>
+			</Form>
+		</div>
+	)
+
+	return (
+		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
 			{error && (
 				<div className="absolute top-4 w-full max-w-md px-4">
-					<div className="bg-white/80 backdrop-blur-xs text-red-700 p-4 rounded-xl shadow-lg border border-red-100">
+					<div className="bg-white/80 backdrop-blur-sm text-red-700 p-4 rounded-xl shadow-lg border border-red-100">
 						{error}
 					</div>
 				</div>
 			)}
 
-			<div className="max-w-md w-full m-4 space-y-8 p-10 bg-white/70 backdrop-blur-xs rounded-2xl shadow-2xl border border-white/50">
+			<div className="max-w-md w-full m-4 space-y-8 p-10 bg-white/70 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50">
 				<div className="text-center space-y-2">
 					<div className="mx-auto h-12 w-12 bg-indigo-600 text-white flex items-center justify-center rounded-xl shadow-lg">
 						<svg
@@ -81,7 +125,7 @@ export default function Screen({actionData}: Route.ComponentProps) {
 									type="email"
 									name="email"
 									required
-									className="pl-10 appearance-none rounded-xl relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/50 backdrop-blur-xs transition duration-200 ease-in-out"
+									className="pl-10 appearance-none rounded-xl relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition duration-200 ease-in-out"
 									placeholder="you@example.com"
 									aria-invalid={fieldErrors?.email ? true : undefined}
 									aria-describedby={
@@ -91,7 +135,7 @@ export default function Screen({actionData}: Route.ComponentProps) {
 							</div>
 							{fieldErrors?.email && (
 								<div id="email-error" className="mt-1 text-sm text-red-600">
-									{fieldErrors.email.join(', ')}
+									{fieldErrors?.email?.join(', ')}
 								</div>
 							)}
 						</div>
@@ -126,7 +170,7 @@ export default function Screen({actionData}: Route.ComponentProps) {
 									name="password"
 									autoComplete="current-password"
 									required
-									className="pl-10 appearance-none rounded-xl relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/50 backdrop-blur-xs transition duration-200 ease-in-out"
+									className="pl-10 appearance-none rounded-xl relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition duration-200 ease-in-out"
 									placeholder="••••••••"
 									aria-invalid={fieldErrors?.password ? true : undefined}
 									aria-describedby={
@@ -136,7 +180,7 @@ export default function Screen({actionData}: Route.ComponentProps) {
 							</div>
 							{fieldErrors?.password && (
 								<div id="password-error" className="mt-1 text-sm text-red-600">
-									{fieldErrors.password.join(', ')}
+									{fieldErrors?.password?.join(', ')}
 								</div>
 							)}
 						</div>
@@ -144,7 +188,7 @@ export default function Screen({actionData}: Route.ComponentProps) {
 
 					<button
 						type="submit"
-						className="relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+						className="relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
 					>
 						<span className="absolute inset-y-0 left-0 flex items-center pl-3">
 							<svg
@@ -176,7 +220,7 @@ export async function action({request}: Route.ActionArgs) {
 		const session = await getSession(request.headers.get('cookie'))
 		session.set('user', user)
 
-		return redirect('/dashboard', {
+		return redirect('/admin', {
 			headers: {'Set-Cookie': await commitSession(session)},
 		})
 	} catch (error) {
@@ -195,13 +239,10 @@ export async function action({request}: Route.ActionArgs) {
 }
 
 export async function loader({request}: Route.LoaderArgs) {
-	const users = await prisma.user.findMany()
-	const items = await prisma.item.findMany()
-	console.log('Users:', users)
-	console.log('Items:', items)
-
 	const session = await getSession(request.headers.get('cookie'))
 	const user = session.get('user')
-	if (user) throw redirect('/dashboard')
+
+	if (user) throw redirect('/admin')
+
 	return data(null)
 }

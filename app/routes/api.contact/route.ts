@@ -1,14 +1,14 @@
-import type {Route} from './+types/route'
 import {data} from 'react-router'
-import {z} from 'zod'
 import {Resend} from 'resend'
+import invariant from 'tiny-invariant'
+import {z} from 'zod'
 import {
 	checkRateLimit,
 	incrementRateLimit,
 	validateEmail,
 	verifyRecaptcha,
 } from './utils'
-import invariant from 'tiny-invariant'
+import type {Route} from './+types/route'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 

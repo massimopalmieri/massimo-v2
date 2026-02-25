@@ -1,15 +1,16 @@
-import {type ReactNode, useRef, useState, useEffect} from 'react'
-import data from '~/data.json'
 import {motion} from 'framer-motion'
-import {z} from 'zod'
+import {useEffect, useRef, useState} from 'react'
+import {GoogleReCaptchaProvider} from 'react-google-recaptcha-v3'
 import {useFetcher, useRouteLoaderData} from 'react-router'
-import type {loader} from '~/root'
+import invariant from 'tiny-invariant'
+import {z} from 'zod'
+import data from '~/data.json'
 import {trackEvent} from '~/utils/analytics'
 import {isChristmasSeason} from '~/utils/dates'
-import type {action} from '../api.contact/route'
-import {GoogleReCaptchaProvider} from 'react-google-recaptcha-v3'
-import invariant from 'tiny-invariant'
 import {useTheme} from '~/utils/theme'
+import type {action} from '../api.contact/route'
+import type {ReactNode} from 'react'
+import type {loader} from '~/root'
 
 const formatter = new Intl.DateTimeFormat('en-GB', {
 	month: 'short',

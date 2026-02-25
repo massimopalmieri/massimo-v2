@@ -1,9 +1,9 @@
-import {prisma} from '~/db.server'
+import * as bcrypt from 'bcrypt'
+import {redirect} from 'react-router'
 import {Authenticator} from 'remix-auth'
 import {FormStrategy} from 'remix-auth-form'
-import {redirect} from 'react-router'
-import {getSession, commitSession} from '~/services/session.server'
-import * as bcrypt from 'bcrypt'
+import {prisma} from '~/db.server'
+import {commitSession, getSession} from '~/services/session.server'
 
 // Define what your user type looks like
 type User = {
