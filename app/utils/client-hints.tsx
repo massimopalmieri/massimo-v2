@@ -3,8 +3,8 @@ import {
 	clientHint as colourSchemeHint,
 	subscribeToSchemeChange,
 } from '@epic-web/client-hints/color-scheme'
-import {useRevalidator} from 'react-router'
 import {useEffect} from 'react'
+import {useRevalidator} from 'react-router'
 
 const hintsUtils = getHintUtils({
 	theme: {
@@ -18,7 +18,10 @@ export const {getHints} = hintsUtils
 export function ClientHintCheck() {
 	const {revalidate} = useRevalidator()
 
-	useEffect(() => subscribeToSchemeChange(() => revalidate()), [revalidate])
+	useEffect(
+		() => subscribeToSchemeChange(() => void revalidate()),
+		[revalidate],
+	)
 
 	return (
 		<script

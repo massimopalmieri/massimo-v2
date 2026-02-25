@@ -1,12 +1,12 @@
 # syntax = docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
-ARG NODE_VERSION=23.0.0
+ARG NODE_VERSION=24.0.0
 FROM node:${NODE_VERSION}-slim as base
 
-LABEL fly_launch_runtime="Remix"
+LABEL app_runtime="Node.js"
 
-# Remix app lives here
+# App lives here
 WORKDIR /app
 
 # Set production environment
@@ -18,7 +18,7 @@ FROM base as build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git node-gyp pkg-config python-is-python3
+    apt-get install --no-install-recommends -y build-essential git node-gyp openssl pkg-config python-is-python3
 
 # Install node modules
 COPY package-lock.json package.json ./
@@ -33,9 +33,13 @@ RUN npm run build
 # Remove development dependencies
 RUN npm prune --omit=dev --legacy-peer-deps
 
-
 # Final stage for app image
 FROM base
+
+# Install packages needed for deployment
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y openssl && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built application
 COPY --from=build /app /app

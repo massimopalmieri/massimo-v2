@@ -4,16 +4,12 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	useRouteLoaderData,
 	isRouteErrorResponse,
 } from 'react-router'
-
 import stylesheet from './app.css?url'
-import {ReactNode} from 'react'
-import invariant from 'tiny-invariant'
-import {Route} from './+types/root'
-import {ClientHintCheck, getHints} from './utils/client-hints'
-import {getTheme} from './utils/theme.server'
+import {ClientHintCheck} from './utils/client-hints'
+import type {Route} from './+types/root'
+import type {ReactNode} from 'react'
 
 export const meta: Route.MetaFunction = () => {
 	return [
@@ -37,28 +33,13 @@ export const links: Route.LinksFunction = () => [
 	{rel: 'stylesheet', href: stylesheet},
 ]
 
-export async function loader({request}: Route.LoaderArgs) {
-	invariant(process.env.RECAPTCHA_SITE_KEY, 'RECAPTCHA_SITE_KEY is undefined')
-
-	const theme = await getTheme(request)
-
-	return {
-		ENV: {
-			RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY,
-		},
-		// hints: getHints(request),
-
-		theme: theme ?? getHints(request).theme,
-	}
+export async function loader(_args: Route.LoaderArgs) {
+	return null
 }
 
 export function Layout({children}: {children: ReactNode}) {
-	const rootLoaderData = useRouteLoaderData<typeof loader>('root')
-	invariant(rootLoaderData, 'root loader data is missing')
-	const {theme} = rootLoaderData
-
 	return (
-		<html lang="en" className={theme}>
+		<html lang="en" className="dark">
 			<head>
 				<ClientHintCheck />
 				<Meta />
@@ -86,7 +67,6 @@ export function Layout({children}: {children: ReactNode}) {
 				)}
 			</head>
 			<body>
-				
 				{children}
 				<ScrollRestoration />
 				<Scripts />

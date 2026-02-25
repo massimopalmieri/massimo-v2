@@ -7,7 +7,7 @@
 	],
 	"compilerOptions": {
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
-		"types": ["node", "vite/client"],
+		"types": ["node", "vite/client", "@vitest/browser/matchers"],
 		"isolatedModules": true,
 		"esModuleInterop": true,
 		"jsx": "react-jsx",
@@ -24,6 +24,7 @@
 			"~/*": ["./app/*"]
 		},
 		"noEmit": true,
-		"rootDirs": [".", "./.react-router/types"]
+		"rootDirs": [".", "./.react-router/types"],
+		"verbatimModuleSyntax": true
 	}
 }

@@ -1,10 +1,6 @@
 {
 	"contacts": [
 		{
-			"label": "CV",
-			"link": "https://massimopalmieri.it"
-		},
-		{
 			"label": "LinkedIn",
 			"link": "https://www.linkedin.com/in/massimopalmieri"
 		},
@@ -12,10 +8,6 @@
 			"label": "Email",
 			"link": "mailto:massimo.4iy55@simplelogin.co",
 			"_link": "mailto:massimo.palmieri+portfolio@gmail.com"
-		},
-		{
-			"label": "Phone",
-			"link": "tel:+447824174839"
 		}
 	],
 	"education": [

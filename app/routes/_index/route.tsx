@@ -1,28 +1,13 @@
-import {type ReactNode, useRef, useState, useEffect} from 'react'
-import data from '~/data.json'
 import {motion} from 'framer-motion'
-import {z} from 'zod'
-import {useFetcher, useRouteLoaderData} from 'react-router'
-import {loader} from '~/root'
-import {trackEvent} from '~/utils/analytics'
+import data from '~/data.json'
 import {isChristmasSeason} from '~/utils/dates'
-import {action} from '../api.contact/route'
-import {GoogleReCaptchaProvider} from 'react-google-recaptcha-v3'
-import invariant from 'tiny-invariant'
 import {useTheme} from '~/utils/theme'
+import type {ReactNode} from 'react'
 
 const formatter = new Intl.DateTimeFormat('en-GB', {
 	month: 'short',
 	year: 'numeric',
 })
-
-const contactSchema = z.object({
-	name: z.string().min(1, 'Name is required'),
-	email: z.string().min(1, 'Email is required').email('Invalid email address'),
-	message: z.string().min(1, 'Message is required'),
-})
-
-type ContactForm = z.infer<typeof contactSchema>
 
 function SectionTitle({children}: {children: ReactNode}) {
 	return (
@@ -35,7 +20,7 @@ function SectionTitle({children}: {children: ReactNode}) {
 			<h2 className="text-base uppercase tracking-wider text-zinc-500 dark:text-white/40">
 				{children}
 			</h2>
-			<div className="h-px flex-1 bg-gradient-to-r from-accent/20 to-transparent" />
+			<div className="h-px flex-1 bg-linear-to-r from-accent/20 to-transparent" />
 		</motion.div>
 	)
 }
@@ -70,112 +55,7 @@ function SnowAnimation() {
 }
 
 export default function Index() {
-	const fetcher = useFetcher<typeof action>()
-	const formRef = useRef<HTMLFormElement>(null)
-	const [errors, setErrors] = useState<
-		Partial<Record<keyof ContactForm, string>>
-	>({})
-	const [isSuccess, setIsSuccess] = useState(false)
-	const rootLoaderData = useRouteLoaderData<typeof loader>('root')
-	invariant(rootLoaderData, 'Root loader data is undefined')
-	const {RECAPTCHA_SITE_KEY} = rootLoaderData.ENV
 	const {theme, toggleTheme} = useTheme()
-
-	const validateField = (name: keyof ContactForm, value: string) => {
-		const result = contactSchema.shape[name].safeParse(value)
-		if (!result.success) {
-			setErrors((prev) => ({
-				...prev,
-				[name]: result.error.issues[0].message,
-			}))
-		} else {
-			setErrors((prev) => {
-				const newErrors = {...prev}
-				delete newErrors[name]
-				return newErrors
-			})
-		}
-	}
-
-	const handleSubmit = async (event: React.FormEvent) => {
-		event.preventDefault()
-
-		const form = event.target as HTMLFormElement
-		if (!form) return
-
-		setErrors({})
-		setIsSuccess(false)
-
-		try {
-			// Get reCAPTCHA token if site key exists
-			let recaptchaToken = ''
-
-			try {
-				recaptchaToken = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, {
-					action: 'submit',
-				})
-			} catch (error) {
-				console.error('reCAPTCHA error:', error)
-				return
-			}
-
-			const formData = new FormData(form)
-			// Add recaptcha token to form data if we have it
-			if (recaptchaToken) {
-				formData.append('recaptchaToken', recaptchaToken)
-			}
-
-			const formObject = Object.fromEntries(formData)
-			const result = contactSchema.safeParse(formObject)
-
-			if (!result.success) {
-				const formattedErrors: Partial<Record<keyof ContactForm, string>> = {}
-				result.error.issues.forEach((issue) => {
-					const path = issue.path[0] as keyof ContactForm
-					formattedErrors[path] = issue.message
-				})
-				setErrors(formattedErrors)
-				return
-			}
-
-			// Track successful form submission
-			trackEvent('form_submit', {
-				type: 'contact_form',
-				value: 'success',
-			})
-
-			fetcher.submit(formData, {
-				method: 'POST',
-				action: '/api/contact',
-			})
-		} catch (error) {
-			// Track form errors
-			trackEvent('form_error', {
-				type: 'contact_form',
-				value: error instanceof Error ? error.message : 'Unknown error',
-			})
-			console.error('Form submission error:', error)
-		}
-	}
-
-	useEffect(() => {
-		if (fetcher.state === 'idle' && fetcher.data?.success) {
-			formRef.current?.reset()
-			setIsSuccess(true)
-		}
-	}, [fetcher.state, fetcher.data])
-
-	useEffect(() => {
-		if (!RECAPTCHA_SITE_KEY) return
-
-		const script = document.createElement('script')
-		script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`
-		document.body.appendChild(script)
-
-		return () => {
-			document.body.removeChild(script)
-		}
-	}, [RECAPTCHA_SITE_KEY])
 
 	return (
 		<div
@@ -230,7 +110,7 @@ export default function Index() {
 				/>
 			</div>
 
-			<div className="relative mx-auto max-w-screen-xl px-6 pb-32">
+			<div className="relative mx-auto max-w-(--breakpoint-xl) px-6 pb-32">
 				{/* Header */}
 				<header className="relative min-h-screen">
 					<div className="fixed top-8 right-8 z-50 flex items-center gap-4">
@@ -282,7 +162,7 @@ export default function Index() {
 							transition={{delay: 0.2}}
 							className="mx-auto max-w-3xl"
 						>
-							<h1 className="animate-gradient bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-white/50 dark:to-white bg-clip-text text-transparent text-[120px] font-semibold leading-none mb-8">
+							<h1 className="animate-gradient bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-white/50 dark:to-white bg-clip-text text-transparent text-[120px] font-semibold leading-none mb-8">
 								<span className="block">Hello, I’m</span>
 								<span className="block">Massimo</span>
 							</h1>
@@ -394,120 +274,30 @@ export default function Index() {
 					{/* Education section - similar updates to Experience section */}
 					{/* ... */}
 
-					<section>
-						<SectionTitle>Contact</SectionTitle>
-
-						<GoogleReCaptchaProvider
-							reCaptchaKey={RECAPTCHA_SITE_KEY}
-							scriptProps={{
-								async: false,
-								defer: true,
-								appendTo: 'head',
-								nonce: undefined,
-							}}
-						>
-							<form
-								ref={formRef}
-								onSubmit={handleSubmit}
-								className="mx-auto max-w-xl space-y-6"
-							>
-								{isSuccess && (
-									<div className="rounded-lg bg-green-500/10 px-4 py-3 text-sm text-green-500">
-										Thanks for your message! I’ll get back to you soon.
-									</div>
-								)}
-								{fetcher.data?.error && (
-									<div className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-500">
-										{fetcher.data.error}
-									</div>
-								)}
-
-								<div className="space-y-4">
-									<div className="space-y-2">
-										<label
-											htmlFor="name"
-											className="block text-sm font-light text-zinc-600 dark:text-white/60"
-										>
-											Name
-										</label>
-										<input
-											id="name"
-											name="name"
-											type="text"
-											autoComplete="name"
-											onBlur={(event) =>
-												validateField('name', event.target.value)
+							<section>
+								<SectionTitle>Contact</SectionTitle>
+								<div className="mx-auto max-w-xl space-y-6">
+									<div className="grid gap-3 sm:grid-cols-2">
+										{data.contacts.map((contact) => (
+										<a
+											key={contact.label}
+											href={contact.link}
+											target={
+												contact.link.startsWith('http') ? '_blank' : undefined
 											}
-											className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
-											placeholder="Your name"
-										/>
-										{errors.name && (
-											<span className="mt-2 block text-sm text-red-400">
-												{errors.name}
-											</span>
-										)}
-									</div>
-
-									<div className="space-y-2">
-										<label
-											htmlFor="email"
-											className="block text-sm font-light text-zinc-600 dark:text-white/60"
-										>
-											Email
-										</label>
-										<input
-											id="email"
-											name="email"
-											type="email"
-											autoComplete="email"
-											onBlur={(event) =>
-												validateField('email', event.target.value)
+											rel={
+												contact.link.startsWith('http')
+													? 'noopener noreferrer'
+													: undefined
 											}
-											className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
-											placeholder="your@email.com"
-										/>
-										{errors.email && (
-											<span className="mt-2 block text-sm text-red-400">
-												{errors.email}
-											</span>
-										)}
-									</div>
-
-									<div className="space-y-2">
-										<label
-											htmlFor="message"
-											className="block text-sm font-light text-zinc-600 dark:text-white/60"
+											className="rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-700 dark:text-white/80 transition-colors hover:border-accent/60 hover:text-accent"
 										>
-											Message
-										</label>
-										<textarea
-											id="message"
-											name="message"
-											rows={5}
-											onBlur={(event) =>
-												validateField('message', event.target.value)
-											}
-											className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm font-light text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-white/20 outline-none ring-accent/50 transition-shadow focus:ring-2"
-											placeholder="Your message..."
-										/>
-										{errors.message && (
-											<span className="mt-2 block text-sm text-red-400">
-												{errors.message}
-											</span>
-										)}
+											{contact.label}
+											</a>
+										))}
 									</div>
 								</div>
-
-								<button
-									type="submit"
-									disabled={fetcher.state !== 'idle'}
-									className="rounded-lg bg-accent/10 px-8 py-3 text-sm font-light text-accent transition-colors hover:bg-accent/20 disabled:opacity-50"
-								>
-									{fetcher.state !== 'idle' ? 'Sending...' : 'Send Message'}
-								</button>
-							</form>
-						</GoogleReCaptchaProvider>
-					</section>
+							</section>
 				</main>
 			</div>
 		</div>

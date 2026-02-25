@@ -1,40 +1,33 @@
-# Welcome to Remix!
+# massimo-v2
 
-- 📖 [Remix docs](https://remix.run/docs)
+## Local development
 
-## Development
+Run the app in development mode:
 
-Run the dev server:
-
-```shellscript
+```sh
 npm run dev
 ```
 
-## Deployment
+## What changed
 
-First, build your app for production:
+- Removed admin/login area
+- Removed contact form backend endpoint
+- Contact section now uses direct links (Email, LinkedIn, etc.)
+- Theme preference is saved in browser `localStorage`
+
+## Raspberry Pi deployment
+
+### 1. Build and run
 
 ```sh
-npm run build
+docker compose -f docker-compose.pi.yml up -d --build
 ```
 
-Then run the app in production mode:
+The app runs on port `3000`.
+
+### 2. Update deployment
 
 ```sh
-npm start
+git pull
+docker compose -f docker-compose.pi.yml up -d --build
 ```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
